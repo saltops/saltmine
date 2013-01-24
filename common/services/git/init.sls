@@ -1,0 +1,5 @@
+#!yaml
+
+git:
+  pkg:
+    - installed
