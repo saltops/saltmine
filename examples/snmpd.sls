@@ -10,7 +10,7 @@
 snmpd:
   pkg.installed
   service:
-    - dead
+    - running
     - name: snmpd
     - enable: True
     - watch:
