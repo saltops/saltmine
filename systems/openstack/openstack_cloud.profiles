@@ -1,3 +1,5 @@
+#openstack environment profiles file for use in salt-cloud
+
 #CentOS 6.3
 openstack_region-0:
   provider: aws

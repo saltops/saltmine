@@ -1,5 +1,5 @@
 #!yaml
-#openstack environment map file
+#openstack environment map file for use in salt-cloud
 
 openstack_region-1:
   - openstack-ha-fabric-controller-1:

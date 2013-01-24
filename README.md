@@ -15,11 +15,8 @@ Saltmine includes the following:
 ### examples:
 + Lots of example code and states.
 
-### openstack:
-+ This collection contains saltstack state trees for setting up and managing openstack systems.
-
 ### systems:
-+ Other large builds that require state trees (such as setting up complex apps or complex db clusters) will be here.  
++ Other large builds that require state trees (such as setting up Openstack or complex db clusters) will be here.  
 
 ### License: 
 + Code is licensed using Apache License 2.0
