@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Saltmine : A curated collection of working salt states and configurations for use in your saltstack setup." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Saltmine</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/saltops/saltmine">View on GitHub</a>
+
+          <h1 id="project_title">Saltmine</h1>
+          <h2 id="project_tagline">A curated collection of working salt states and configurations for use in your saltstack setup.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/saltops/saltmine/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/saltops/saltmine/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>saltmine</h1>
+
+<p>A curated collection of working salt states and configurations for use in your saltstack setup.</p>
+
+<p>Please add your salt states here by opening a pull request! I aim to create the best collection of working salt states and configs possible.</p>
+
+<p>The initial goal is to have states that are compatible with both RHEL and Debian distributions. If people show interest in additional compatibility, add it as a github issue.</p>
+
+<p>Saltmine includes the following:</p>
+
+<h3>common:</h3>
+
+<ul>
+<li>This collection is designed to be included in your salt project, and then included in your projects by including the <code>states</code> found here.</li>
+</ul><h3>examples:</h3>
+
+<ul>
+<li>Lots of example code and states.</li>
+</ul><h3>systems:</h3>
+
+<ul>
+<li>Other large builds that require state trees (such as setting up Openstack or complex db clusters) will be here.</li>
+</ul><h3>dependencies:</h3>
+
+<ul>
+<li>salt &gt;= 0.12.0</li>
+<li>mako &gt;= 0.7.3</li>
+</ul><h3>installation:</h3>
+
+<ul>
+<li>clone this repo to your salt installation, and include the directory in the file_roots setting of your salt master.</li>
+</ul><p>Example: 
+If you cloned saltmine within the /srv/ directory:</p>
+
+<div class="highlight"><pre><span class="l-Scalar-Plain">base</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">/srv/saltmine/</span>
+</pre></div>
+
+<p>And then to add a module to your salt setup, simple <code>include</code>.</p>
+
+<p>Example:</p>
+
+<div class="highlight"><pre><span class="l-Scalar-Plain">include</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">saltmine.common.services.git</span>
+</pre></div>
+
+<ul>
+<li>Include the saltmine<br>
+</li>
+</ul><h3>License:</h3>
+
+<ul>
+<li>Code is licensed using Apache License 2.0</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Saltmine maintained by <a href="https://github.com/saltops">saltops</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
