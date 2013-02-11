@@ -1,0 +1,73 @@
+openstack_region-1:
+  - openstack-ha-fabric-controller-1:
+      grains:
+        roles:
+          - fc
+          - fc1
+        environment: staging
+  - openstack-ha-fabric-controller-2:
+      grains:
+        roles:
+          - fc
+          - fc2
+        environment: staging
+  - openstack-rabbitmq-1:
+      grains:
+        roles:
+          - rabbitmq
+          - rabbitmq1
+        environment: staging
+  - openstack-rabbitmq-2:
+      grains:
+        roles:
+          - rabbitmq
+          - rabbitmq2
+        environment: staging
+  - openstack-keystone-1:
+      grains:
+        roles:
+          - keystone
+          - keystone1
+        environment: staging
+  - openstack-keystone-2:
+      grains:
+        roles:
+          - keystone
+          - keystone2
+        environment: staging
+  - openstack-haproxy-1:
+      grains:
+        roles:
+          - haproxy
+          - haproxy1
+        environment: staging
+  - openstack-haproxy-2:
+      grains:
+        roles:
+          - haproxy
+          - haproxy2
+        environment: staging
+  - openstack-xtradb-1:
+      grains:
+        roles:
+          - xtradb
+          - xtradb1
+        environment: staging
+  - openstack-xtradb-2:
+      grains:
+        roles:
+          - xtradb
+          - xtradb2
+        environment: staging
+  - openstack-xtradb-3:
+      grains:
+        roles:
+          - xtradb
+          - xtradb3
+        environment: staging
+  - openstack-xtradb-4:
+      grains:
+        roles:
+          - xtradb
+          - xtradb4
+        environment: staging                
