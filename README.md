@@ -16,7 +16,31 @@ Saltmine includes the following:
 + Lots of example code and states.
 
 ### systems:
-+ Other large builds that require state trees (such as setting up Openstack or complex db clusters) will be here.  
++ Other large builds that require state trees (such as setting up Openstack or complex db clusters) will be here.
+
+### dependencies:
++ salt >= 0.12.0
++ mako >= 0.7.3
+
+### installation:
++ clone this repo to your salt installation, and include the directory in the file_roots setting of your salt master.
+
+Example: 
+If you cloned saltmine within the /srv/ directory:
+
+```yaml
+base:
+  - /srv/saltmine/
+```
+
+And then to add a module to your salt setup, simple ``include``.
+
+Example:
+```yaml
+include:
+  - saltmine.common.services.git
+```
++ Include the saltmine  
 
 ### License: 
 + Code is licensed using Apache License 2.0
