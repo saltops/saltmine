@@ -1,46 +1,56 @@
-saltmine
+SaltMine
 ========
 
-A curated collection of working salt states and configurations for use in your saltstack setup.
+A curated collection of working salt states and configurations for use in your SaltStack setup.
 
-Please add your salt states here by opening a pull request! I aim to create the best collection of working salt states and configs possible.
+Please contribute your Salt states here by opening a pull request. The aim of this project is to 
+create a collection of Salt states with the following characteristics:
 
-The initial goal is to have states that are compatible with both RHEL and Debian distributions. If people show interest in additional compatibility, add it as a github issue.
+1. Easy to integrate with custom Salt setups.
+2. Abstracts out differences in package names to simplify package installation.
+3. Stable, with versioned 'releases' to guarantee compatibility as the project proceeds.
+4. Well-tested, with comprehensive tests built for every state. (TODO!)
+5. Flexible and Object-oriented, making it easy to extend and customize without modifying SaltMine code.
+6. Community-oriented, with external contributions quickly reviewed and integrated.
+7. Fun!
 
-Saltmine includes the following:
+###Compatibility: 
+The initial goal is to maintain compatibility with mainstream RHEL and Debian distributions. 
+If people show interest in additional compatibility, please let us know by adding it as a github issue,
+or open pull requests with your modifications that add compatibility for your favorite repos.
 
-### common:
-+ This collection is designed to be included in your salt project, and then included in your projects by including the `states` found here.
-
-### examples:
-+ Lots of example code and states.
-
-### systems:
-+ Other large builds that require state trees (such as setting up Openstack or complex db clusters) will be here.
-
-### dependencies:
+### Dependencies:
 + salt >= 0.12.0
 + mako >= 0.7.3
++ python >= 2.6
 
-### installation:
-+ clone this repo to your salt installation, and include the directory in the file_roots setting of your salt master.
+### Installation:
++ Make sure that you have a working salt installation (including mako)
++ Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.
++ To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your `base` environment.
 
 Example: 
-If you cloned saltmine within the /srv/ directory:
+If you cloned SaltMine within the /srv/ directory, this should be in your salt master config file:
 
 ```yaml
-base:
-  - /srv/saltmine/
+file_roots:
+  base:
+    - /srv/saltmine/
 ```
 
-And then to add a module to your salt setup, simple ``include``.
+### Using SaltMine:
+Once the SaltMine repo is included into your file_roots, to use SaltMine configs in your salt setup, simply ``include`` the appropriate service or state.
 
-Example:
+Examples:
 ```yaml
 include:
-  - saltmine.common.services.git
+  - saltmine.services.git
 ```
-+ Include the saltmine  
+
+```yaml
+include:
+  - saltmine.services.haproxy
+```
 
 ### License: 
 + Code is licensed using Apache License 2.0
