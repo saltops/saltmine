@@ -31,7 +31,9 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>The aim of this project is to create a collection of Salt states with the following characteristics:</p>
+        <h3>Goals:</h3>
+
+<p>The aim of this project is to create a collection of Salt states with the following characteristics:</p>
 
 <ol>
 <li>Easy to integrate with custom Salt setups.</li>
@@ -43,12 +45,12 @@
 <li>Fun!</li>
 </ol><h3>Contributing:</h3>
 
-<p>Simply open a pull request on github.</p>
+<p>Please contribute your Salt states here by opening a pull request on GitHub.</p>
 
 <h3>Compatibility:</h3>
 
 <p>The initial goal is to maintain compatibility with mainstream RHEL and Debian distributions. 
-If people show interest in additional compatibility, please let us know by adding it as a github issue,
+If people show interest in additional compatibility, please let us know by adding it as a GitHub issue,
 or open pull requests with your modifications that add compatibility for your favorite repos.</p>
 
 <h3>Dependencies:</h3>
@@ -60,11 +62,11 @@ or open pull requests with your modifications that add compatibility for your fa
 </ul><h3>Installation:</h3>
 
 <ul>
-<li>Make sure that you have a working salt installation (including mako)</li>
+<li>Make sure that you have a working Salt installation (including mako)</li>
 <li>Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.</li>
 <li>To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your <code>base</code> environment.</li>
 </ul><p>Example: 
-If you cloned SaltMine within the /srv/ directory, this should be in your salt master config file:</p>
+If you cloned SaltMine within the /srv/ directory, this should be in your Salt master config file <code>/etc/salt/master</code>:</p>
 
 <div class="highlight"><pre><span class="l-Scalar-Plain">file_roots</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">base</span><span class="p-Indicator">:</span>
