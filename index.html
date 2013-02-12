@@ -4,11 +4,11 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Saltmine : A curated collection of working salt states and configurations for use in your saltstack setup." />
+    <meta name="description" content="SaltMine : A curated collection of working salt states and configurations for use in your saltstack setup." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Saltmine</title>
+    <title>SaltMine</title>
   </head>
 
   <body>
@@ -18,7 +18,7 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/saltops/saltmine">View on GitHub</a>
 
-          <h1 id="project_title">Saltmine</h1>
+          <h1 id="project_title">SaltMine</h1>
           <h2 id="project_tagline">A curated collection of working salt states and configurations for use in your saltstack setup.</h2>
 
             <section id="downloads">
@@ -31,56 +31,61 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>saltmine</h1>
+        <p>The aim of this project is to create a collection of Salt states with the following characteristics:</p>
 
-<p>A curated collection of working salt states and configurations for use in your saltstack setup.</p>
+<ol>
+<li>Easy to integrate with custom Salt setups.</li>
+<li>Abstracts out differences in package names to simplify package installation.</li>
+<li>Stable, with versioned 'releases' to guarantee compatibility as the project proceeds.</li>
+<li>Well-tested, with comprehensive tests built for every state. (TODO!)</li>
+<li>Flexible and Object-oriented, making it easy to extend and customize without modifying SaltMine code.</li>
+<li>Community-oriented, with external contributions quickly reviewed and integrated.</li>
+<li>Fun!</li>
+</ol><h3>Contributing:</h3>
 
-<p>Please add your salt states here by opening a pull request! I aim to create the best collection of working salt states and configs possible.</p>
+<p>Simply open a pull request on github.</p>
 
-<p>The initial goal is to have states that are compatible with both RHEL and Debian distributions. If people show interest in additional compatibility, add it as a github issue.</p>
+<h3>Compatibility:</h3>
 
-<p>Saltmine includes the following:</p>
+<p>The initial goal is to maintain compatibility with mainstream RHEL and Debian distributions. 
+If people show interest in additional compatibility, please let us know by adding it as a github issue,
+or open pull requests with your modifications that add compatibility for your favorite repos.</p>
 
-<h3>common:</h3>
-
-<ul>
-<li>This collection is designed to be included in your salt project, and then included in your projects by including the <code>states</code> found here.</li>
-</ul><h3>examples:</h3>
-
-<ul>
-<li>Lots of example code and states.</li>
-</ul><h3>systems:</h3>
-
-<ul>
-<li>Other large builds that require state trees (such as setting up Openstack or complex db clusters) will be here.</li>
-</ul><h3>dependencies:</h3>
+<h3>Dependencies:</h3>
 
 <ul>
 <li>salt &gt;= 0.12.0</li>
 <li>mako &gt;= 0.7.3</li>
-</ul><h3>installation:</h3>
+<li>python &gt;= 2.6</li>
+</ul><h3>Installation:</h3>
 
 <ul>
-<li>clone this repo to your salt installation, and include the directory in the file_roots setting of your salt master.</li>
+<li>Make sure that you have a working salt installation (including mako)</li>
+<li>Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.</li>
+<li>To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your <code>base</code> environment.</li>
 </ul><p>Example: 
-If you cloned saltmine within the /srv/ directory:</p>
+If you cloned SaltMine within the /srv/ directory, this should be in your salt master config file:</p>
 
-<div class="highlight"><pre><span class="l-Scalar-Plain">base</span><span class="p-Indicator">:</span>
-  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">/srv/saltmine/</span>
+<div class="highlight"><pre><span class="l-Scalar-Plain">file_roots</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">base</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">/srv/saltmine/</span>
 </pre></div>
 
-<p>And then to add a module to your salt setup, simple <code>include</code>.</p>
+<h3>Using SaltMine:</h3>
 
-<p>Example:</p>
+<p>Once the SaltMine repo is included into your file_roots, to use SaltMine configs in your salt setup, simply <code>include</code> the appropriate service or state.</p>
+
+<p>Examples:</p>
 
 <div class="highlight"><pre><span class="l-Scalar-Plain">include</span><span class="p-Indicator">:</span>
-  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">saltmine.common.services.git</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">saltmine.services.git</span>
 </pre></div>
 
-<ul>
-<li>Include the saltmine<br>
-</li>
-</ul><h3>License:</h3>
+<div class="highlight"><pre><span class="l-Scalar-Plain">include</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">saltmine.services.haproxy</span>
+</pre></div>
+
+<h3>License:</h3>
 
 <ul>
 <li>Code is licensed using Apache License 2.0</li>
@@ -91,7 +96,7 @@ If you cloned saltmine within the /srv/ directory:</p>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Saltmine maintained by <a href="https://github.com/saltops">saltops</a></p>
+        <p class="copyright">SaltMine maintained by <a href="https://github.com/saltops">saltops</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
