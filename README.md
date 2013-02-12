@@ -3,8 +3,8 @@ SaltMine
 
 A curated collection of working salt states and configurations for use in your SaltStack setup.
 
-Please contribute your Salt states here by opening a pull request. The aim of this project is to 
-create a collection of Salt states with the following characteristics:
+###Goals:
+The aim of this project is to create a collection of Salt states with the following characteristics:
 
 1. Easy to integrate with custom Salt setups.
 2. Abstracts out differences in package names to simplify package installation.
@@ -14,9 +14,12 @@ create a collection of Salt states with the following characteristics:
 6. Community-oriented, with external contributions quickly reviewed and integrated.
 7. Fun!
 
+###Contributing:
+Please contribute your Salt states here by opening a pull request on GitHub.
+
 ###Compatibility: 
 The initial goal is to maintain compatibility with mainstream RHEL and Debian distributions. 
-If people show interest in additional compatibility, please let us know by adding it as a github issue,
+If people show interest in additional compatibility, please let us know by adding it as a GitHub issue,
 or open pull requests with your modifications that add compatibility for your favorite repos.
 
 ### Dependencies:
@@ -25,12 +28,12 @@ or open pull requests with your modifications that add compatibility for your fa
 + python >= 2.6
 
 ### Installation:
-+ Make sure that you have a working salt installation (including mako)
++ Make sure that you have a working Salt installation (including mako)
 + Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.
 + To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your `base` environment.
 
 Example: 
-If you cloned SaltMine within the /srv/ directory, this should be in your salt master config file:
+If you cloned SaltMine within the /srv/ directory, this should be in your Salt master config file ``/etc/salt/master``:
 
 ```yaml
 file_roots:
