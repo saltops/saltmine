@@ -17,15 +17,16 @@ crontab-file:
     - template: mako
     - defaults:
       crontab_path: ${crontab_path}
-    - watch:
-      - cmd: crontab-load
 
 #Load crontab if /root/crontab-file differs from the crontab contents.
 
 crontab-load:
-  cmd.run:
+  cmd.wait:
     - name: crontab /root/crontab-file
+    - cwd: /
     - unless: 'crontab -l | diff - /root/crontab-file'
+    - watch:
+      - file: crontab-file
     - require:
       - pkg: crontab-pkg
 
