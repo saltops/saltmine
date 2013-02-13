@@ -28,7 +28,6 @@ crontab-load:
     - unless: 'crontab -l | diff - /root/crontab-file'
     - require:
       - pkg: crontab-pkg
-      - file: crontab-file
 
 
 
