@@ -74,6 +74,6 @@ xtradb-my-cnf-nodes${xtradb_node[0]}:
       - pkg: percona-xtradb-client-pkg
       - pkg: percona-xtradb-server-pkg
     - defaults:
-      current_node: ${xtradb_node[0]}
-      mysql_nodes: ${xtradb_nodes} 
+        current_node: ${xtradb_node[0]}
+        mysql_nodes: ${xtradb_nodes}
 % endfor
