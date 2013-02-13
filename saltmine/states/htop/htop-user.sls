@@ -6,7 +6,7 @@ include:
     - saltmine.services.htop
 
 <%
-username=pillar.get('username')
+username=pillar['username']
 %>
 
 % if username:
