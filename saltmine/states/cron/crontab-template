@@ -1,4 +1,4 @@
-${crontab_path}
+${saltmine_crontab_path}
 # This crontab is managed by Salt, do not manually edit
 % for line in accumulator['mycrontab']:
 ${line}

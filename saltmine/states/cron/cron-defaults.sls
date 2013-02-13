@@ -1,8 +1,8 @@
 #!mako|yaml
 
 <%
-#crontab_path:'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-crontab_path=pillar['crontab_path']
+saltmine_crontab_path=pillar['saltmine_crontab_path']
+saltmine_crontab_file_root=pillar['saltmine_crontab_file_root']
 %>
 
 include:
@@ -12,23 +12,21 @@ include:
 
 crontab-file:
   file.managed:
-    - name: /root/crontab-file
+    - name: ${saltmine_crontab_file_root}
     - source: salt://saltmine/states/cron/crontab-template
     - template: mako
     - defaults:
-      crontab_path: ${crontab_path}
+      saltmine_crontab_path: ${saltmine_crontab_path}
 
 #Load crontab if /root/crontab-file differs from the crontab contents.
+#http://docs.saltstack.org/en/latest/ref/states/all/salt.states.cmd.html#module-salt.states.cmd
 
 crontab-load:
-  cmd.wait:
-    - name: crontab /root/crontab-file
+  cmd.run:
+    - name: 'crontab -l | diff - ${saltmine_crontab_file_root}; crontab ${saltmine_crontab_file_root}'
     - cwd: /
-    - unless: 'crontab -l | diff - /root/crontab-file'
+    - unless: 'crontab -l | diff - ${saltmine_crontab_file_root}'
     - watch:
       - file: crontab-file
     - require:
       - pkg: crontab-pkg
-
-
-
