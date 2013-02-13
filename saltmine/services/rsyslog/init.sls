@@ -18,7 +18,6 @@ haproxy-logrotate:
     - source: salt://saltmine/services/rsyslog/haproxy_logrotate
     - require:
       - pkg: rsyslog-pkg
-#    - mode: 0755
 
 haproxy-rsyslog-conf:
   file.managed:

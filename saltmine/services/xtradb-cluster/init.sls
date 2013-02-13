@@ -1,14 +1,14 @@
 #!mako|yaml
 
-# Yes, they will b running on centos. this won't work on debian.
+# This won't work on debian currently.
 # http://www.percona.com/doc/percona-xtradb-cluster/howtos/3nodesec2.html
 
 <%
-  server_status = pillar.get('server_status')
+  xtradb_nodes = pillar['xtradb_nodes']
 %>
 
 include:
-  - common.services.repos.percona
+  - saltmine.services.repos.percona
 
 
 percona-xtradb-client-pkg:
@@ -61,26 +61,11 @@ percona-xtradb-server:
       - cmd: mnt-data-dir-init
 
 # Retrieving from pillars and putting into this format:
+# expected xtradb_nodes pillar format:
 # xtradb_nodes={'1':'10.10.10.101', '2':'10.10.10.102', '3':'10.10.10.103'}
 
-<%
-if server_status:
-  xtradb_nodes={}
-  for server in server_status:
-    if server_status[server]['roles'] == 'xtradb' and server_status[server]['state'] != 'TERMINATED':
-      node_number = server.split('-')[-1]
-      dns = server_status[server]['private_dns']
-      xtradb_nodes.update({node_number:dns})
-%>
-
-% if server_status:
-  % for server in server_status:
-    % if server_status[server]['roles'] == 'xtradb' and server_status[server]['state'] != 'TERMINATED':
-<% 
-xtradb_node_num = server.split('-')[-1]  # Example: openstack-xtradb-1
-%>
-
-xtradb-my-cnf-nodes${xtradb_node_num}:
+% for xtradb_node in xtrasb_nodes:
+xtradb-my-cnf-nodes${xtradb_node[0]}:
   file.managed
     - name: /etc/my.cnf
     - source: salt://common/services/xtradb-cluster/my.cnf.mako
@@ -89,8 +74,6 @@ xtradb-my-cnf-nodes${xtradb_node_num}:
       - pkg: percona-xtradb-client-pkg
       - pkg: percona-xtradb-server-pkg
     - defaults:
-      current_node: ${xtradb_node_num}
+      current_node: ${xtradb_node[0]}
       mysql_nodes: ${xtradb_nodes} 
-    % endif
-  % endfor
-% endif
+% endfor

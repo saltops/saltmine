@@ -2,11 +2,6 @@
 
 #openstack-keystone setup
 
-<%
-  server_status = pillar.get('server_status')
-  openstack_settings = pillar.get('openstack_settings')
-%>
-
 include:
   - saltmine.services.repos.epel
 
