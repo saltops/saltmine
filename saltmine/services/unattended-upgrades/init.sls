@@ -1,3 +1,5 @@
+#!yaml
+
 # https://help.ubuntu.com/10.04/serverguide/automatic-updates.html
 
 unattended-upgrades-pkg:
