@@ -10,6 +10,14 @@ include:
 <%
   saltmine_openstack_mysql_root_username=pillar['saltmine_openstack_mysql_root_username']
   saltmine_openstack_mysql_root_password=pillar['saltmine_openstack_mysql_root_password']
+
+  saltmine_openstack_keystone_service_token=pillar['saltmine_openstack_keystone_service_token']
+  saltmine_openstack_keystone_service_endpoint=pillar['saltmine_openstack_keystone_service_endpoint']
+
+  saltmine_openstack_OS_USERNAME=pillar['saltmine_openstack_OS_USERNAME']
+  saltmine_openstack_OS_PASSWORD=pillar['saltmine_openstack_OS_PASSWORD']
+  saltmine_openstack_OS_TENANT_NAME=pillar['saltmine_openstack_OS_TENANT_NAME']
+  saltmine_openstack_OS_AUTH_URL=pillar['saltmine_openstack_OS_AUTH_URL']
 %>
 
 
@@ -73,14 +81,14 @@ openstack-nova-common-pkg:
       - pkg: dhcp-control-pkg
 
 #for testing nova within a vm, need this:
-openstack-nova-vm-on-vm:
-  file.sed:
-    - name: /etc/nova/nova.conf
-    - before: 'kvm'
-    - after: 'none'
-    - limit: ^libvirt_type=
-    - require:
-      - pkg: openstack-nova-common-pkg
+# openstack-nova-vm-on-vm:
+#   file.sed:
+#     - name: /etc/nova/nova.conf
+#     - before: 'kvm'
+#     - after: 'none'
+#     - limit: ^libvirt_type=
+#     - require:
+#       - pkg: openstack-nova-common-pkg
 
 
 #----------------------------
@@ -162,6 +170,14 @@ libvirtd-service:
     - require:
       - pkg: openstack-pkgs
 
+memcached-service:
+  service:
+    - running
+    - enable: True
+    - name: memcached
+    - require:
+      - pkg: openstack-pkgs
+
 httpd-service:
   service:
     - running
@@ -169,6 +185,16 @@ httpd-service:
     - name: httpd
     - require:
       - pkg: openstack-pkgs
+
+% for svc in ['api','scheduler']:
+openstack-cinder-${svc}-service:
+  service:
+    - running
+    - enable: True
+    - name: openstack-cinder-${svc}
+    - require:
+      - pkg: openstack-pkgs
+% endfor
 
 % for svc in ['api','registry']:
 openstack-glance-${svc}-service:
@@ -204,13 +230,15 @@ openstack-keystone-service:
 
 mysql-service:
   service:
-    - name: mysql
+    - name: mysqld
     - running
     - enable: True
     - require:
       - pkg: mysql-pkg
 
-
+# To reset password to blank:
+# UPDATE mysql.user SET Password=PASSWORD('') WHERE User='root';
+# FLUSH PRIVILEGES;
 
 #----------------------------
 # Initialize DB's 
@@ -218,7 +246,8 @@ mysql-service:
 
 nova-db-init:
   cmd.run:
-    - name: "openstack-db -y --init --service nova --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - name: "openstack-db -y --init --service nova --rootpw ''"
+#    - name: "openstack-db -y --init --service nova --rootpw '${saltmine_openstack_mysql_root_password}'"
     - unless: echo '' | mysql nova
     - require:
       - pkg: openstack-pkgs
@@ -226,7 +255,8 @@ nova-db-init:
 
 glance-db-init:
   cmd.run:
-    - name: "openstack-db -y --init --service glance --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - name: "openstack-db -y --init --service glance --rootpw ''"
+#    - name: "openstack-db -y --init --service glance --rootpw '${saltmine_openstack_mysql_root_password}'"
     - unless: echo '' | mysql glance
     - require:
       - pkg: openstack-pkgs
@@ -234,34 +264,211 @@ glance-db-init:
 
 keystone-db-init:
   cmd.run:
-    - name: "openstack-db -y --init --service keystone --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - name: "openstack-db -y --init --service keystone --rootpw ''"
+#    - name: "openstack-db -y --init --service keystone --rootpw '${saltmine_openstack_mysql_root_password}'"
     - unless: echo '' | mysql keystone
     - require:
       - pkg: openstack-pkgs
       - service: mysql-service
 
-#----------------------------
-# Install Config Files
-#----------------------------
+#--------------------------------------------
+# Setup keystone
+#--------------------------------------------
+
+nova-compute-init:
+  cmd.run:
+    - name: openstack-config --set /etc/nova/nova.conf DEFAULT libvirt_cpu_mode none
+    - unless: grep 'libvirt_cpu_mode = none' /etc/nova/nova.conf
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-nova-compute-service
+
+#--------------------------------------------
+# Setup nova-compute to work with vm on vm
+#--------------------------------------------
+
+nova-compute-init:
+  cmd.run:
+    - name: openstack-config --set /etc/nova/nova.conf DEFAULT libvirt_cpu_mode none
+    - unless: grep 'libvirt_cpu_mode = none' /etc/nova/nova.conf
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-nova-compute-service
+
+
+#-----------------------------------------
+# Setup cinder with nova and keystone
+#-----------------------------------------
 
 cinder-init1:
   cmd.run:
     - name: openstack-config --set /etc/nova/nova.conf DEFAULT volume_api_class nova.volume.cinder.API
-    - unless: grep 'nova.volume.cinder.API' /etc/nova/nova.conf
+    - unless: grep 'volume_api_class = nova.volume.cinder.API' /etc/nova/nova.conf
     - require:
       - pkg: openstack-cinder-pkg
       - pkg: openstack-pkgs
       - service: openstack-keystone
-      # - service: openstack-nova-api
-      # - service: openstack-nova-compute
+    - watch_in:
+      - service: openstack-nova-api-service
+      - service: openstack-nova-compute-service
 
 cinder-init2:
   cmd.run:
     - name: 'openstack-config --set /etc/nova/nova.conf DEFAULT enabled_apis ec2,osapi_compute,metadata'
-    - unless: "grep 'ec2,osapi_compute,metadata' /etc/nova/nova.conf"
+    - unless: "grep 'enabled_apis = ec2,osapi_compute,metadata' /etc/nova/nova.conf"
     - require:
       - pkg: openstack-cinder-pkg
       - pkg: openstack-pkgs
       - service: openstack-keystone
-      # - service: openstack-nova-api
-      # - service: openstack-nova-compute
+    - watch_in:
+      - service: openstack-nova-api-service
+      - service: openstack-nova-compute-service
+
+#-----------------------------------------
+# Setup nova to use keystone
+#-----------------------------------------
+nova-init1:
+  cmd.run:
+    - name: 'openstack-config --set /etc/nova/nova.conf DEFAULT auth_strategy keystone'
+    - unless: "grep 'auth_strategy = keystone' /etc/nova/nova.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-nova-api-service
+      - service: openstack-nova-compute-service
+
+nova-init2:
+  cmd.run:
+    - name: 'openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_tenant_name service'
+    - unless: "grep 'admin_tenant_name = service' /etc/nova/nova.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-nova-api-service
+      - service: openstack-nova-compute-service
+
+nova-init3:
+  cmd.run:
+    - name: 'openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_user nova'
+    - unless: "grep 'admin_user = nova' /etc/nova/nova.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-nova-api-service
+      - service: openstack-nova-compute-service
+
+nova-init4:
+  cmd.run:
+    - name: 'openstack-config --set /etc/nova/nova.conf keystone_authtoken admin_password servicepass'
+    - unless: "grep 'admin_password = servicepass' /etc/nova/nova.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-nova-api-service
+      - service: openstack-nova-compute-service
+
+#-----------------------------------------
+# Setup glance to use keystone
+#-----------------------------------------
+
+% for svc in ['api', 'registry']:
+glance-init1-${svc}:
+  cmd.run:
+    - name: 'openstack-config --set /etc/glance/glance-${svc}.conf paste_deploy flavor keystone'
+    - unless: "grep 'flavor = keystone' /etc/glance/glance-${svc}.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-glance-${svc}-service
+% endfor
+
+% for svc in ['api', 'registry']:
+glance-init2-${svc}:
+  cmd.run:
+    - name: 'openstack-config --set /etc/glance/glance-${svc}.conf keystone_authtoken admin_tenant_name service'
+    - unless: "grep 'admin_tenant_name = service' /etc/glance/glance-${svc}.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-glance-${svc}-service
+% endfor
+
+% for svc in ['api', 'registry']:
+glance-init3-${svc}:
+  cmd.run:
+    - name: 'openstack-config --set /etc/glance/glance-${svc}.conf keystone_authtoken admin_user glance'
+    - unless: "grep 'admin_user = glance' /etc/glance/glance-${svc}.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-glance-${svc}-service
+% endfor
+
+% for svc in ['api', 'registry']:
+glance-init4-${svc}:
+  cmd.run:
+    - name: 'openstack-config --set /etc/glance/glance-${svc}.conf keystone_authtoken admin_password servicepass'
+    - unless: "grep 'admin_password = servicepass' /etc/glance/glance-${svc}.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-glance-${svc}-service
+% endfor
+
+
+#-----------------------------------------
+# Setup cinder to use keystone
+#-----------------------------------------
+
+cinder-init1:
+  cmd.run:
+    - name: 'openstack-config --set /etc/cinder/cinder.conf DEFAULT auth_strategy keystone'
+    - unless: "grep 'auth_strategy = keystone' /etc/cinder/cinder.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-cinder-api-service
+      - service: openstack-cinder-scheduler-service
+
+cinder-init2:
+  cmd.run:
+    - name: 'openstack-config --set /etc/cinder/cinder.conf keystone_authtoken admin_tenant_name service'
+    - unless: "grep 'admin_tenant_name = service' /etc/cinder/cinder.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-cinder-api-service
+      - service: openstack-cinder-scheduler-service
+
+cinder-init3:
+  cmd.run:
+    - name: 'openstack-config --set /etc/cinder/cinder.conf keystone_authtoken admin_user cinder'
+    - unless: "grep 'admin_user = cinder' /etc/cinder/cinder.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-cinder-api-service
+      - service: openstack-cinder-scheduler-service
+
+cinder-init4:
+  cmd.run:
+    - name: 'openstack-config --set /etc/cinder/cinder.conf keystone_authtoken admin_password servicepass'
+    - unless: "grep 'admin_password = servicepass' /etc/cinder/cinder.conf"
+    - require:
+      - pkg: openstack-pkgs
+    - watch_in:
+      - service: openstack-cinder-api-service
+      - service: openstack-cinder-scheduler-service
+
+
+#----------------------------
+# Setup swift
+#----------------------------
+
+
+
+
+
+
