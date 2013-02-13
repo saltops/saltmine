@@ -46,6 +46,7 @@ file_roots:
 pillar_roots:
   base:
     - /srv/saltmine/pillar
+```
 
 Alternatively, you can just add the appropriate variables to your current pillar files.
 
@@ -53,6 +54,7 @@ Alternatively, you can just add the appropriate variables to your current pillar
 Once the SaltMine repo is included into your file_roots, to use SaltMine configs in your salt setup, simply ``include`` the appropriate service or state.
 
 Examples:
+
 ```yaml
 include:
   - saltmine.services.git
