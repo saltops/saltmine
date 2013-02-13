@@ -5,6 +5,10 @@ haproxy-pkg:
     - installed
     - name: haproxy
 
+haproxy-cfg:
+  file.managed:
+    - name: /etc/haproxy/haproxy.cfg
+
 haproxy-service:
   service:
     - dead
@@ -12,7 +16,7 @@ haproxy-service:
     - enable: 
       - false
     - watch:
-      - file: /etc/haproxy/haproxy.cfg
+      - file: haproxy-cfg
     - require:
       - pkg: haproxy-pkg
 
