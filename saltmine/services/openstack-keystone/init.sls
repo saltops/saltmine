@@ -5,6 +5,7 @@
 include:
   - saltmine.services.repos.epel
   - saltmine.services.repos.percona
+  - saltmine.services.repos.ius
 
 <%
   saltmine_openstack_mysql_root_username=pillar['saltmine_openstack_mysql_root_username']
@@ -20,13 +21,6 @@ epel-testing-enable:
     - before: 0
     - after: 1
     - limit: ^enabled=
-
-openstack-utils-pkg:
-  pkg:
-    - installed
-    - name: openstack-utils
-    - require:
-      - pkg: epel-repo
 
 #------------
 # qpid
@@ -52,13 +46,6 @@ qpid-authno-conf:
     - watch_in:
       - service: qpid-service
 
-qpid-service:
-  service:
-    - running
-    - enable: True
-    - name: qpidd
-
-
 avahi-pkg:
   pkg:
     - installed
@@ -72,14 +59,6 @@ dhcp-control-pkg:
     - name: dnsmasq-utils
     - require:
       - pkg: epel-repo
-
-messagebus-service:
-  service:
-    - running
-    - enable: True
-    - name: messagebus
-    - require:
-      - pkg: dhcp-control-pkg
 
 #----------------------------
 # Begin nova-specific install
@@ -105,28 +84,8 @@ openstack-nova-vm-on-vm:
 
 
 #----------------------------
-# Enable & Start Services
+# Install Packages
 #----------------------------
-
-% for svc in ['api','registry']:
-openstack-glance-${svc}-service:
-  service:
-    - running
-    - enable: True
-    - name: openstack-glance-${svc}
-    - require:
-      - pkg: openstack-pkgs
-% endfor
-
-% for svc in ['api', 'objectstore', 'compute', 'network', 'scheduler', 'cert', 'consoleauth', 'novncproxy']:
-openstack-nova-${svc}-service:
-  service:
-    - running
-    - enable: True
-    - name: openstack-nova-${svc}
-    - require:
-      - pkg: openstack-pkgs
-% endfor
 
 openstack-cinder-pkg:
   pkg:
@@ -160,44 +119,149 @@ openstack-pkgs:
       - openstack-swift
       - openstack-quantum
       - virt-what
+      - openstack-utils
     - require:
       - pkg: openstack-swift-plugin-pkg
+      - pkg: epel-repo
 
 #only use localinstall for testing...
-openstack-local-mysql:
+mysql-pkg:
   pkg.installed:
     - names: 
-      - Percona-Server-client-55 
-      - Percona-Server-server-55
+      - mysql55
+      - mysql55-server
     - require: 
       - pkg: openstack-pkgs
-      - pkg: percona-repo
+      - pkg: ius-repo
 
-openstack-local-mysql-service:
+#----------------------------
+# Enable & Start Services
+#----------------------------
+
+qpid-service:
+  service:
+    - running
+    - enable: True
+    - name: qpidd
+    - require:
+      - pkg: qpid-cpp-server-pkgs
+
+messagebus-service:
+  service:
+    - running
+    - enable: True
+    - name: messagebus
+    - require:
+      - pkg: dhcp-control-pkg
+
+libvirtd-service:
+  service:
+    - running
+    - enable: True
+    - name: libvirtd
+    - require:
+      - pkg: openstack-pkgs
+
+httpd-service:
+  service:
+    - running
+    - enable: True
+    - name: httpd
+    - require:
+      - pkg: openstack-pkgs
+
+% for svc in ['api','registry']:
+openstack-glance-${svc}-service:
+  service:
+    - running
+    - enable: True
+    - name: openstack-glance-${svc}
+    - require:
+      - pkg: openstack-pkgs
+      - cmd: glance-db-init
+% endfor
+
+% for svc in ['api', 'objectstore', 'compute', 'network', 'scheduler', 'cert', 'consoleauth', 'novncproxy']:
+openstack-nova-${svc}-service:
+  service:
+    - running
+    - enable: True
+    - name: openstack-nova-${svc}
+    - require:
+      - pkg: openstack-pkgs
+      - service: mysql-service
+      - cmd: nova-db-init
+      - cmd: keystone-db-init
+% endfor
+
+openstack-keystone-service:
+  service:
+    - running
+    - enable: True
+    - name: openstack-keystone
+    - require:
+      - pkg: openstack-keystone
+
+mysql-service:
   service:
     - name: mysql
     - running
     - enable: True
     - require:
-      - pkg: openstack-local-mysql
+      - pkg: mysql-pkg
 
-openstack-local-mysql-init-script:
-  file.managed:
-    - name: /root/mysql-init.sh
-    - source: salt://saltmine/services/openstack-keystone/openstack-local-mysql-init.sh
-    - template: mako
-    - require:
-      - service: openstack-local-mysql-service
-    - defaults:
-        saltmine_openstack_mysql_root_username: ${saltmine_openstack_mysql_root_username}
-        saltmine_openstack_mysql_root_password: ${saltmine_openstack_mysql_root_password}
 
-openstack-local-mysql-init:
+
+#----------------------------
+# Initialize DB's 
+#----------------------------
+
+nova-db-init:
   cmd.run:
-    - name: sh /root/mysql-init.sh
-    - unless: mysql -u root
+    - name: "openstack-db -y --init --service nova --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - unless: echo '' | mysql nova
     - require:
-      - file: openstack-local-mysql-init-script
-    - watch_in:
-      - file: openstack-local-mysql-service
-    - stateful: True      
+      - pkg: openstack-pkgs
+      - service: mysql-service
+
+glance-db-init:
+  cmd.run:
+    - name: "openstack-db -y --init --service glance --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - unless: echo '' | mysql glance
+    - require:
+      - pkg: openstack-pkgs
+      - service: mysql-service
+
+keystone-db-init:
+  cmd.run:
+    - name: "openstack-db -y --init --service keystone --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - unless: echo '' | mysql keystone
+    - require:
+      - pkg: openstack-pkgs
+      - service: mysql-service
+
+#----------------------------
+# Install Config Files
+#----------------------------
+
+cinder-init1:
+  cmd.run:
+    - name: openstack-config --set /etc/nova/nova.conf DEFAULT volume_api_class nova.volume.cinder.API
+    - unless: grep 'nova.volume.cinder.API' /etc/nova/nova.conf
+    - require:
+      - pkg: openstack-cinder-pkg
+      - pkg: openstack-pkgs
+      - service: openstack-keystone
+      # - service: openstack-nova-api
+      # - service: openstack-nova-compute
+
+cinder-init2:
+  cmd.run:
+    - name: 'openstack-config --set /etc/nova/nova.conf DEFAULT enabled_apis ec2,osapi_compute,metadata'
+    - unless: "grep 'ec2,osapi_compute,metadata' /etc/nova/nova.conf"
+    - require:
+      - pkg: openstack-cinder-pkg
+      - pkg: openstack-pkgs
+      - service: openstack-keystone
+      # - service: openstack-nova-api
+      # - service: openstack-nova-compute
