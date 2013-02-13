@@ -32,14 +32,22 @@ or open pull requests with your modifications that add compatibility for your fa
 + Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.
 + To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your `base` environment.
 
-Example: 
-If you cloned SaltMine within the /srv/ directory, this should be in your Salt master config file ``/etc/salt/master``:
+If you cloned SaltMine within the /srv/ directory, ensure that the ``/srv/saltmine`` directory is added to the ``base`` file_roots environment in your Salt master config file:
 
 ```yaml
 file_roots:
   base:
-    - /srv/saltmine/
+    - /srv/saltmine
 ```
+
++ Some of the states rely on pillar variables, so also add the saltmine pillar to the ``pillar_roots`` in your Salt master config file:
+
+```yaml
+pillar_roots:
+  base:
+    - /srv/saltmine/pillar
+
+Alternatively, you can just add the appropriate variables to your current pillar files.
 
 ### Using SaltMine:
 Once the SaltMine repo is included into your file_roots, to use SaltMine configs in your salt setup, simply ``include`` the appropriate service or state.
