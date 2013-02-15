@@ -1,4 +1,4 @@
-#!jinja|yaml
+#!yaml
 
 # mako: make sure that mako is installed properly when minions start up.
 # https://github.com/saltstack/salt-cloud/issues/230
@@ -13,14 +13,14 @@
   #   sls_list:
   #     - saltmine.services.mako
 
-pip-pkg:
-  pkg.installed:
-{% if grains['os_family'] == 'Debian'%}
-    - name: python-pip
-{% endif %}
-{% if grains['os_family'] == 'RedHat'%}
-    - name: pip-python
-{% endif %}
+# pip-pkg:
+#   pkg.installed:
+# {% if grains['os_family'] == 'Debian'%}
+#     - name: python-pip
+# {% endif %}
+# {% if grains['os_family'] == 'RedHat'%}
+#     - name: pip-python
+# {% endif %}
 
 # python-pip-cmd:
 #   cmd.run:
@@ -33,3 +33,7 @@ mako-pip:
     - require:
       - pkg: pip-pkg
 #      - cmd: python-pip-cmd
+
+pip-pkg:
+  pkg.installed:
+    - name: python-pip
