@@ -16,14 +16,14 @@ percona-xtradb-client-pkg:
     - installed
     - name: Percona-XtraDB-Cluster-client
     - require:
-      - pkg: repos-percona
+      - pkg: percona-repo
 
 percona-xtradb-server-pkg:
   pkg:
     - installed
     - name: Percona-XtraDB-Cluster-server
     - require:
-      - pkg: repos-percona
+      - pkg: percona-repo
 
 mnt-data-dir:
   file.directory:
@@ -37,7 +37,7 @@ mnt-data-dir:
 mnt-data-dir-init:
   cmd.run:
     - name: mysql_install_db --datadir=/mnt/data --user=mysql
-    - unless: [ -z "$(ls /mnt/data/)"] || echo 'NOT EMPTY'
+    - unless: [ -z '$(ls /mnt/data/)'] || echo 'NOT EMPTY'
     - require:
       - file: mnt-data-dir
 

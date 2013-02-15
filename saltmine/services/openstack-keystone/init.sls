@@ -20,6 +20,9 @@ include:
   saltmine_openstack_OS_AUTH_URL=pillar['saltmine_openstack_OS_AUTH_URL']
 %>
 
+#------------
+# repo setup
+#------------
 
 # Enable the epel testing repo by default
 # http://docs.saltstack.org/en/latest/ref/states/all/salt.states.file.html
@@ -29,6 +32,7 @@ epel-testing-enable:
     - before: 0
     - after: 1
     - limit: ^enabled=
+
 
 #------------
 # qpid
@@ -54,6 +58,10 @@ qpid-authno-conf:
     - watch_in:
       - service: qpid-service
 
+#----------------------------
+# Install Packages
+#----------------------------
+
 avahi-pkg:
   pkg:
     - installed
@@ -68,10 +76,6 @@ dhcp-control-pkg:
     - require:
       - pkg: epel-repo
 
-#----------------------------
-# Begin nova-specific install
-#----------------------------
-
 openstack-nova-common-pkg:
   pkg:
     - installed
@@ -79,21 +83,6 @@ openstack-nova-common-pkg:
     - require:
       - service: messagebus-service
       - pkg: dhcp-control-pkg
-
-#for testing nova within a vm, need this:
-# openstack-nova-vm-on-vm:
-#   file.sed:
-#     - name: /etc/nova/nova.conf
-#     - before: 'kvm'
-#     - after: 'none'
-#     - limit: ^libvirt_type=
-#     - require:
-#       - pkg: openstack-nova-common-pkg
-
-
-#----------------------------
-# Install Packages
-#----------------------------
 
 openstack-cinder-pkg:
   pkg:
@@ -271,18 +260,55 @@ keystone-db-init:
       - pkg: openstack-pkgs
       - service: mysql-service
 
+cinder-db-init:
+  cmd.run:
+    - name: "openstack-db -y --init --service cinder --rootpw ''"
+#    - name: "openstack-db -y --init --service keystone --rootpw '${saltmine_openstack_mysql_root_password}'"
+    - unless: echo '' | mysql cinder
+    - require:
+      - pkg: openstack-pkgs
+      - service: mysql-service
+
 #--------------------------------------------
 # Setup keystone
 #--------------------------------------------
 
-nova-compute-init:
-  cmd.run:
-    - name: openstack-config --set /etc/nova/nova.conf DEFAULT libvirt_cpu_mode none
-    - unless: grep 'libvirt_cpu_mode = none' /etc/nova/nova.conf
+keystone-env-file:
+  file.managed:
+    - name: /root/keystonerc
+    - source: salt://saltmine/services/openstack-keystone/keystonerc
+    - template: mako
+    - defaults:
+        saltmine_openstack_OS_USERNAME: ${saltmine_openstack_OS_USERNAME}
+        saltmine_openstack_OS_PASSWORD: ${saltmine_openstack_OS_PASSWORD}
+        saltmine_openstack_OS_TENANT_NAME: ${saltmine_openstack_OS_TENANT_NAME}
+        saltmine_openstack_OS_AUTH_URL: ${saltmine_openstack_OS_AUTH_URL}
     - require:
       - pkg: openstack-pkgs
     - watch_in:
-      - service: openstack-nova-compute-service
+      - service: openstack-keystone-service
+
+keystone-env-init:
+  cmd.run:
+    - name: export SERVICE_TOKEN=${saltmine_openstack_keystone_service_token}; export SERVICE_ENDPOINT=${saltmine_openstack_keystone_service_endpoint}; source /root/keystonerc
+    - unless: '[[ $OS_AUTH_URL == "${saltmine_openstack_OS_AUTH_URL}" ]] && echo "equals"'
+    - require:
+      - pkg: openstack-pkgs
+      - file: keystone-env-file
+    - watch_in:
+      - service: openstack-keystone-service
+
+keystone-token-init:
+  cmd.run:
+    - name: openstack-config --set /etc/keystone/keystone.conf DEFAULT admin_token ${saltmine_openstack_keystone_service_token}
+    - unless: "grep 'admin_token = ${saltmine_openstack_keystone_service_token}' /etc/keystone/keystone.conf"
+    - require:
+      - pkg: openstack-pkgs
+      - file: keystone-env-file
+    - watch_in:
+      - service: openstack-keystone-service
+      - cmd: keystone-env-init
+
 
 #--------------------------------------------
 # Setup nova-compute to work with vm on vm
@@ -309,7 +335,7 @@ cinder-init1:
     - require:
       - pkg: openstack-cinder-pkg
       - pkg: openstack-pkgs
-      - service: openstack-keystone
+      - service: openstack-keystone-service
     - watch_in:
       - service: openstack-nova-api-service
       - service: openstack-nova-compute-service
@@ -321,7 +347,7 @@ cinder-init2:
     - require:
       - pkg: openstack-cinder-pkg
       - pkg: openstack-pkgs
-      - service: openstack-keystone
+      - service: openstack-keystone-service
     - watch_in:
       - service: openstack-nova-api-service
       - service: openstack-nova-compute-service
