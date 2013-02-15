@@ -29,7 +29,7 @@ pip-pkg:
 
 mako-pip:
   pip.installed:
-    - name: mako
+    - name: Mako
     - require:
       - pkg: pip-pkg
 #      - cmd: python-pip-cmd
