@@ -2,7 +2,7 @@
 
 <%
 if 'boto_version' in pillar:
-  boto_version=pillar['boto_version']
+  boto_version=pillar['saltmine_boto_version']
 else:
   boto_version=None
 %>

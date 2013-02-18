@@ -18,7 +18,7 @@ The aim of this project is to create a collection of Salt states with the follow
 
 SaltMine's structure is designed to meet the day-to-day needs of regular saltstack users. The structure has
 gone through many iterations so far, and there is a certain philosophy underpinning many of the design choices.
-Take a look at our [SaltMine Philosophy](./philosophy.md) document for more information.
+Take a look at our [SaltMine Standards](./saltmine_standards.md) document for more information.
 
 ### Contributing:
 Please contribute your Salt states here by opening a pull request on GitHub.

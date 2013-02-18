@@ -8,3 +8,5 @@ nginx-conf:
     - name: /etc/nginx/nginx.conf
     - watch_in:
       - service: nginx-service
+    - require:
+      - service: nginx-service

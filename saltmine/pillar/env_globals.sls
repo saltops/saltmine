@@ -10,4 +10,4 @@ saltmine_crontab_file_root: '/root/crontab_file_root'
 saltmine_openstack_mysql_root_username: 'root'
 saltmine_openstack_mysql_root_password: 'test'
 
-boto_version: '2.7.0'
+saltmine_boto_version: '2.7.0'
