@@ -7,12 +7,12 @@ openstack_region-0:
   location: us-west-1
   availability_zone: us-west-1b
   size: Medium Instance
-  script: RHEL6
+  script: bootstrap-salt-minion
   minion:
     log_level: debug
     startup_states: sls
     sls_list:
-      - common.services.mako
+      - saltmine.pkgs.mako
 
 #Ubuntu 12.04
 openstack_region-1:
@@ -21,9 +21,9 @@ openstack_region-1:
   location: us-west-1
   availability_zone: us-west-1b
   size: Medium Instance
-  script: Ubuntu
+  script: bootstrap-salt-minion
   minion:
     log_level: debug
     startup_states: sls
     sls_list:
-      - common.services.mako
+      - saltmine.pkgs.mako
