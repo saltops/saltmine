@@ -27,7 +27,7 @@ All elements must use named and unique keys to enable easy extension.
 
 ### Map Files:
 
-+ Include salt-cloud maps and profiles in named directories in ``/saltmine/maps/``
++ Include salt-cloud maps and profiles in named directories in ``saltmine/maps/``
 
 ### Pkg Files:
 
@@ -41,9 +41,14 @@ All elements must use named and unique keys to enable easy extension.
 + Services are set to require the appropriate installation states
 + The service itself should not have a ``watch: file`` parameter. This is not very maintainable.
 
+### Pillar Variables:
+
++ All saltmine pillar variables begin with ``saltmine_``. E.g. ``saltmine_boto_version``
++ Use simple `key: value` pairs only for easy extensibility. E.g. ``saltmine_boto_version: '2.7.0'``
+
 ### States:
 
-+ states should be included in named directories in ``/saltmine/states/``
++ states should be included in named directories in ``saltmine/states/``
 + Default config files are set up in the init.sls file in the states directory 
 + Use ``watch_in`` and ``require_in``, etc. to modify the service that the state file depends on. 
 
@@ -51,7 +56,7 @@ All elements must use named and unique keys to enable easy extension.
 Use this:
 
 ```yaml
-# /saltmine/service/haproxy.sls
+# saltmine/service/haproxy.sls
 haproxy-service:
   service:
     - dead
@@ -61,7 +66,7 @@ haproxy-service:
     - require:
       - pkg: haproxy-pkg
 
-# /saltmine/states/haproxy/init.sls
+# saltmine/states/haproxy/init.sls
 haproxy-cfg:
   file.managed:
     - name: /etc/haproxy/haproxy.cfg
@@ -96,11 +101,6 @@ haproxy:
     - require:
       - pkg: haproxy
 ```
-
-### Pillar Variables:
-
-+ All saltmine pillar variables begin with ``saltmine_``. E.g. ``saltmine_boto_version``
-+ Use simple `key: value` pairs only for easy extensibility. E.g. ``saltmine_boto_version: '2.7.0'``
 
 ### TBI (To be implemented)
 
