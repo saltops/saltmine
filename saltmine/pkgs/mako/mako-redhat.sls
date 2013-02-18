@@ -18,7 +18,23 @@ mako-pip:
     - name: Mako
     - require:
       - pkg: pip-pkg
+#      - cmd: python-pip-cmd
 
 pip-pkg:
   pkg.installed:
-    - name: python-pip
+    - name: pip-python
+
+
+# pip-pkg:
+#   pkg.installed:
+# {% if grains['os_family'] == 'Debian'%}
+#     - name: python-pip
+# {% endif %}
+# {% if grains['os_family'] == 'RedHat'%}
+#     - name: pip-python
+# {% endif %}
+
+# python-pip-cmd:
+#   cmd.run:
+#     - name: easy_install pip
+#     - unless: pip --version 2> /dev/null

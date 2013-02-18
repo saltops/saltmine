@@ -11,10 +11,11 @@ username=pillar['username']
 
 % if username:
 
-/home/${username}/.htoprc:
+htoprc-user-file:
   file.managed:
+    - name: '/home/${username}/.htoprc'
     - makedirs: True
-    - source: salt://saltmine/services/htop/htoprc
+    - source: salt://saltmine/files/htop/htoprc
     - user: ${username}
     - group: ${username}
     - mode: 0644

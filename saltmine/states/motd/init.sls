@@ -1,3 +1,5 @@
+#!yaml
+
 motd-file:
   file:
     - managed
@@ -6,4 +8,4 @@ motd-file:
     - user: root
     - group: root
     - mode: 444
-    - source: salt://saltmine/states/motd/motd.mako
+    - source: salt://saltmine/files/motd/motd.mako

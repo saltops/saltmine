@@ -1,0 +1,5 @@
+#!/bin/bash
+export OS_USERNAME=${saltmine_openstack_OS_USERNAME}
+export OS_PASSWORD=${saltmine_openstack_OS_PASSWORD}
+export OS_TENANT_NAME=${saltmine_openstack_OS_TENANT_NAME}
+export OS_AUTH_URL=${saltmine_openstack_OS_AUTH_URL}
