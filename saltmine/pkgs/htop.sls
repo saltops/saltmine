@@ -2,7 +2,7 @@
 
 % if grains['os_family'] == 'RedHat':
 include:
-  - saltmine.services.repos.epel
+  - saltmine.pkgs.epel
 % endif
 
 

@@ -6,7 +6,7 @@ saltmine_crontab_file_root=pillar['saltmine_crontab_file_root']
 %>
 
 include:
-  - saltmine.services.crontab
+  - saltmine.pkgs.crontab
 
 # install a default crontab file with the path in it.
 

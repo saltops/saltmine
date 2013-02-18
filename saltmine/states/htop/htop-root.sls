@@ -1,7 +1,7 @@
 #!yaml
 
 include:
-    - saltmine.services.htop
+    - saltmine.pkgs.htop
 
 htoprc-root-file:
   file.managed:

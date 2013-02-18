@@ -3,7 +3,7 @@
 # Installs htop for a single named user set with a pillar key named: 'username'
 
 include:
-    - saltmine.services.htop
+    - saltmine.pkgs.htop
 
 <%
 username=pillar['username']

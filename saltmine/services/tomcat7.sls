@@ -1,3 +1,5 @@
+#!yaml
+
 include:
   - saltmine.pkgs.tomcat7
 

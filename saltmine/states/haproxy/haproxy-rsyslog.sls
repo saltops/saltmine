@@ -1,7 +1,7 @@
 #!yaml
 
 include:
-  - saltmine.service.rsyslog
+  - saltmine.services.rsyslog
 
 haproxy-logrotate:
   file.managed:

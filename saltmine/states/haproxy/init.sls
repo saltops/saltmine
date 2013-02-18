@@ -8,3 +8,4 @@ haproxy-cfg:
     - name: /etc/haproxy/haproxy.cfg
     - watch_in:
       - service: haproxy-service
+    - require: haproxy-service

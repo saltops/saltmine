@@ -8,7 +8,7 @@
 %>
 
 include:
-  - saltmine.pkg.percona
+  - saltmine.pkgs.percona
 
 
 percona-xtradb-client-pkg:

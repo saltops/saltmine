@@ -10,3 +10,5 @@ nginx-service:
     - enable: False
     - require:
       - pkg: nginx-pkg
+      - user: nginx
+      - group: nginx
