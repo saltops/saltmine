@@ -1,6 +1,6 @@
 Welcome to host ${ grains['id'] }:
  - Architecture: ${ grains['cpuarch'] }
- - OS: ${ grains['lsb_description'] }
+ - OS: ${ grains['osfullname'] } ${ grains['osrelease'] }
  - CPU: ${ grains['num_cpus'] }
  - Memory: ${ grains['mem_total'] } Mb
 

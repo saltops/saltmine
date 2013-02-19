@@ -9,12 +9,12 @@
 # Support: openstack@lists.launchpad.net
 # License: Apache Software License (ASL) 2.0
 #
-HOST_IP=100.10.10.51
-ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin_pass}
-SERVICE_PASSWORD=${SERVICE_PASSWORD:-service_pass}
+HOST_IP=${saltmine_openstack_keystone_ip}
+ADMIN_PASSWORD=${saltmine_openstack_OS_PASSWORD}
+SERVICE_PASSWORD=${saltmine_openstack_OS_PASSWORD}
 export SERVICE_TOKEN="ADMIN"
-export SERVICE_ENDPOINT="http://${HOST_IP}:35357/v2.0"
-SERVICE_TENANT_NAME=${SERVICE_TENANT_NAME:-service}
+export SERVICE_ENDPOINT="http://${saltmine_openstack_keystone_ip}:35357/v2.0"
+SERVICE_TENANT_NAME=${saltmine_openstack_keystone_service_tenant_name}
 
 get_id () {
     echo `$@ | awk '/ id / { print $4 }'`
