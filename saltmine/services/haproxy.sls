@@ -11,8 +11,8 @@ haproxy-service:
       - false
     - require:
       - pkg: haproxy-pkg
-      - user: haproxy
-      - group: haproxy
+      # - user: haproxy
+      # - group: haproxy
 
 % if grains['os_family'] == 'Debian':
 haproxy-defaultfile:
