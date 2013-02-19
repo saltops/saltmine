@@ -32,3 +32,7 @@ saltmine_openstack_OS_TENANT_NAME: 'admin'
 # Glance
 saltmine_openstack_glance_user: 'glance'
 saltmine_openstack_glance_pass: 'gla2013'
+
+# Quantum
+saltmine_openstack_quantum_user: 'quantum'
+saltmine_openstack_quantum_pass: 'qua2013'
