@@ -9,4 +9,4 @@ haproxy-cfg:
     - watch_in:
       - service: haproxy-service
     - require: 
-      - service: haproxy-service
+      - pkg: haproxy-pkg
