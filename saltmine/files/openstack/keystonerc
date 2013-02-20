@@ -1,0 +1,5 @@
+#!/bin/bash
+export OS_USERNAME=${saltmine_openstack_OS_USERNAME}
+export OS_PASSWORD=${saltmine_openstack_OS_PASSWORD}
+export OS_TENANT_NAME=${saltmine_openstack_OS_TENANT_NAME}
+export OS_AUTH_URL="http://${saltmine_openstack_keystone_ext_ip}:5000/v2.0/"

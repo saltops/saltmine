@@ -1,19 +1,19 @@
 #!yaml
 
 include:
-  - saltmine.service.rsyslog
+  - saltmine.services.rsyslog
 
 haproxy-logrotate:
   file.managed:
     - name: /etc/logrotate.d/haproxy
-    - source: salt://saltmine/states/haproxy/haproxy_logrotate
+    - source: salt://saltmine/files/haproxy/haproxy_logrotate
     - require:
       - pkg: rsyslog-pkg
 
 haproxy-rsyslog-conf:
   file.managed:
     - name: /etc/rsyslog.d/haproxy.conf
-    - source: salt://saltmine/states/haproxy/haproxy_syslog_conf
+    - source: salt://saltmine/files/haproxy/haproxy_syslog_conf
     - require:
       - file: haproxy-logrotate
 
