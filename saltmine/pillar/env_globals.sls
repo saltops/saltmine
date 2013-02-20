@@ -24,6 +24,8 @@ saltmine_openstack_keystone_service_endpoint: 'http://127.0.0.1:35357/v2.0'
 
 saltmine_openstack_keystone_ip: '100.10.10.51'
 saltmine_openstack_keystone_ext_ip: '192.168.100.51'
+saltmine_openstack_keystone_auth_port: '35357'
+
 
 saltmine_openstack_OS_USERNAME: 'admin'
 saltmine_openstack_OS_PASSWORD: '1234'

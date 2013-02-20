@@ -14,6 +14,7 @@ include:
   saltmine_openstack_glance_user=pillar['saltmine_openstack_glance_user']
   saltmine_openstack_glance_pass=pillar['saltmine_openstack_glance_pass']
   saltmine_openstack_keystone_ip=pillar['saltmine_openstack_keystone_ip']
+  saltmine_openstack_keystone_auth_port=pillar['saltmine_openstack_keystone_auth_port']
 
   saltmine_openstack_keystone_service_token=pillar['saltmine_openstack_keystone_service_token']
   saltmine_openstack_keystone_service_endpoint=pillar['saltmine_openstack_keystone_service_endpoint']

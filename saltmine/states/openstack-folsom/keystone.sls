@@ -3,6 +3,7 @@
 # openstack-folsom keystone setup
 
 include:
+  - saltmine.states.openstack-folsom.openstackcommon
   - saltmine.pkgs.epel
   - saltmine.pkgs.percona
   - saltmine.pkgs.ius
@@ -66,30 +67,6 @@ rabbitmq-server-service:
       - rabbitmq-server
     - require: 
       - pkg: epel-repo
-
-ntp-pkg:
-  pkg.installed:
-    - names: 
-      - ntp
-
-ntp-service:
-  service:
-    - name: ntpd
-    - running
-    - enable: True
-    - require:
-      - pkg: ntp-pkg
-
-bridge-utils-pkg:
-  pkg.installed:
-    - names: 
-      - bridge-utils
-
-ip-forwarding-enable:
-  sysctl:
-    - name: net.ipv4.ip_forward
-    - present
-    - value: "1"
 
 openstack-keystone-pkg:
   pkg.installed:

@@ -3,6 +3,7 @@
 # openstack-folsom quantum setup
 
 include:
+  - saltmine.states.openstack-folsom.openstackcommon
   - saltmine.pkgs.epel
   - saltmine.pkgs.percona
   - saltmine.pkgs.ius
@@ -13,6 +14,8 @@ include:
   saltmine_openstack_mysql_root_password=pillar['saltmine_openstack_mysql_root_password']
 
   saltmine_openstack_keystone_ip=pillar['saltmine_openstack_keystone_ip']
+  saltmine_openstack_keystone_auth_port=pillar['saltmine_openstack_keystone_auth_port']
+
   saltmine_openstack_keystone_service_token=pillar['saltmine_openstack_keystone_service_token']
   saltmine_openstack_keystone_service_endpoint=pillar['saltmine_openstack_keystone_service_endpoint']
   saltmine_openstack_keystone_service_tenant_name=pillar['saltmine_openstack_keystone_service_tenant_name']
@@ -55,6 +58,9 @@ openstack-quantum-service:
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
 
+# only install database if we're on the control node
+% if 'openstack-control' in grains['roles']:
+
 openstack-quantum-db-create:
   cmd.run:
     - name: mysql -u root -e "CREATE DATABASE quantum;"
@@ -70,6 +76,8 @@ openstack-quantum-db-init:
     - name: mysql -u root -e "GRANT ALL ON quantum.* TO '${saltmine_openstack_quantum_user}'@'%' IDENTIFIED BY '${saltmine_openstack_quantum_pass}';"
     - unless: echo '' | mysql quantum -u ${saltmine_openstack_quantum_user} -h 0.0.0.0 --password=${saltmine_openstack_quantum_pass}
 
+% endif
+
 openstack-quantum-ovs_quantum_plugin-ini:
   file.managed:
     - name: /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini
@@ -78,6 +86,7 @@ openstack-quantum-ovs_quantum_plugin-ini:
         saltmine_openstack_quantum_user: ${saltmine_openstack_quantum_user}
         saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
         saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
+        grains: ${grains}
     - template: mako
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
@@ -87,7 +96,7 @@ openstack-quantum-ovs_quantum_plugin-ini:
 openstack-quantum-api-paste-ini:
   file.managed:
     - name: /etc/quantum/api-paste.ini
-    - source: salt://saltmine/files/openstack/api-paste.ini
+    - source: salt://saltmine/files/openstack/quantum-api-paste.ini
     - defaults:
         saltmine_openstack_quantum_user: ${saltmine_openstack_quantum_user}
         saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
