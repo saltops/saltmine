@@ -1,0 +1,29 @@
+#openstack environment profiles file for use in salt-cloud
+
+#CentOS 6.3
+openstack_region-0:
+  provider: aws
+  image: ami-0e60eb3e
+  location: us-west-1
+  availability_zone: us-west-1b
+  size: Medium Instance
+  script: bootstrap-salt-minion
+  minion:
+    log_level: debug
+    startup_states: sls
+    sls_list:
+      - saltmine.pkgs.mako
+
+#Ubuntu 12.04
+openstack_region-1:
+  provider: aws
+  image: ami-7e2da54e
+  location: us-west-1
+  availability_zone: us-west-1b
+  size: Medium Instance
+  script: bootstrap-salt-minion
+  minion:
+    log_level: debug
+    startup_states: sls
+    sls_list:
+      - saltmine.pkgs.mako
