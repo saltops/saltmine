@@ -45,6 +45,15 @@ openstack-quantum-openvswitch-pkg:
       - openstack-quantum-openvswitch
     - require: 
       - pkg: epel-repo
+      - pkg: openstack-quantum-pkg
+
+openstack-quantum-service:
+  service:
+    - running
+    - enable: True
+    - name: quantum-server
+    - require:
+      - pkg: openstack-quantum-openvswitch-pkg
 
 openstack-quantum-db-create:
   cmd.run:
@@ -61,4 +70,31 @@ openstack-quantum-db-init:
     - name: mysql -u root -e "GRANT ALL ON quantum.* TO '${saltmine_openstack_quantum_user}'@'%' IDENTIFIED BY '${saltmine_openstack_quantum_pass}';"
     - unless: echo '' | mysql quantum -u ${saltmine_openstack_quantum_user} -h 0.0.0.0 --password=${saltmine_openstack_quantum_pass}
 
+openstack-quantum-ovs_quantum_plugin-ini:
+  file.managed:
+    - name: /etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini
+    - source: salt://saltmine/files/openstack/ovs_quantum_plugin.ini
+    - defaults:
+        saltmine_openstack_quantum_user: ${saltmine_openstack_quantum_user}
+        saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
+        saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
+    - template: mako
+    - require:
+      - pkg: openstack-quantum-openvswitch-pkg
+    - watch_in:
+      - service: openstack-quantum-service
 
+openstack-quantum-api-paste-ini:
+  file.managed:
+    - name: /etc/quantum/api-paste.ini
+    - source: salt://saltmine/files/openstack/api-paste.ini
+    - defaults:
+        saltmine_openstack_quantum_user: ${saltmine_openstack_quantum_user}
+        saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
+        saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
+        saltmine_openstack_keystone_service_tenant_name: ${saltmine_openstack_keystone_service_tenant_name}
+    - template: mako
+    - require:
+      - pkg: openstack-quantum-openvswitch-pkg
+    - watch_in:
+      - service: openstack-quantum-service
