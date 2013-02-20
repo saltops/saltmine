@@ -36,3 +36,7 @@ saltmine_openstack_glance_pass: 'gla2013'
 # Quantum
 saltmine_openstack_quantum_user: 'quantum'
 saltmine_openstack_quantum_pass: 'qua2013'
+
+# Nova
+saltmine_openstack_nova_user: 'nova'
+saltmine_openstack_nova_pass: 'nov2013'

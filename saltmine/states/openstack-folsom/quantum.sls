@@ -1,6 +1,6 @@
 #!mako|yaml
 
-# openstack-folsom glance setup
+# openstack-folsom quantum setup
 
 include:
   - saltmine.pkgs.epel

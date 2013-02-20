@@ -33,6 +33,16 @@ mysql-pkg:
     - require: 
       - pkg: ius-repo
 
+python-mysqldb-pkg:
+  pkg.installed:
+    - names: 
+      - MySQL-python
+# on Ubuntu
+#      - python-mysqldb
+    - require: 
+      - pkg: ius-repo
+      - pkg: mysql-pkg
+
 mysql-service:
   service:
     - name: mysqld
@@ -40,6 +50,22 @@ mysql-service:
     - enable: True
     - require:
       - pkg: mysql-pkg
+
+rabbitmq-server-pkg:
+  pkg.installed:
+    - names: 
+      - rabbitmq-server
+    - require: 
+      - pkg: epel-repo
+
+rabbitmq-server-service:
+  service:
+    - running
+    - enable: True
+    - names: 
+      - rabbitmq-server
+    - require: 
+      - pkg: epel-repo
 
 ntp-pkg:
   pkg.installed:
