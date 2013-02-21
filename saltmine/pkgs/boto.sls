@@ -1,7 +1,7 @@
 #!mako|yaml
 
 <%
-if 'boto_version' in pillar:
+if 'saltmine_boto_version' in pillar:
   boto_version=pillar['saltmine_boto_version']
 else:
   boto_version=None
