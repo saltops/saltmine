@@ -66,7 +66,7 @@ Examples:
 
 ```yaml
 include:
-  - saltmine.services.git
+  - saltmine.pkgs.git
 ```
 
 ```yaml
