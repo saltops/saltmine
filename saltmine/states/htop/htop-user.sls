@@ -3,10 +3,11 @@
 # Installs htop for a single named user set with a pillar key named: 'username'
 
 include:
-    - saltmine.pkgs.htop
+  - saltmine.pkgs.htop
 
 <%
-username=pillar['username']
+if 'username' in pillar:
+  username=pillar['username']
 %>
 
 % if username:
