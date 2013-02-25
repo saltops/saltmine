@@ -3,7 +3,6 @@
 # openstack-folsom keystone setup
 
 include:
-  - saltmine.states.openstack-folsom.openstackcommon
   - saltmine.pkgs.epel
   - saltmine.pkgs.percona
   - saltmine.pkgs.ius
