@@ -1,11 +1,13 @@
 #!mako|yaml
 
-# openstack-folsom nova setup
+# openstack-folsom networknode setup
 
 include:
-  - saltmine.pkgs.epel
-  - saltmine.pkgs.percona
-  - saltmine.pkgs.ius
+  - saltmine.states.openstack-folsom.openstackcommon
+  - saltmine.states.openstack-folsom.quantum
+  - saltmine.states.openstack-folsom.openvswitch-bridges-computenode
+  - saltmine.states.openstack-folsom.nova-compute
+  - saltmine.states.openstack-folsom.cinder
 
 <%
   saltmine_openstack_mysql_root_username=pillar['saltmine_openstack_mysql_root_username']
@@ -31,70 +33,51 @@ include:
   saltmine_openstack_OS_PASSWORD=pillar['saltmine_openstack_OS_PASSWORD']
   saltmine_openstack_OS_TENANT_NAME=pillar['saltmine_openstack_OS_TENANT_NAME']
   saltmine_openstack_keystone_ext_ip=pillar['saltmine_openstack_keystone_ext_ip']
-
+  saltmine_openstack_keystone_metadata_port=pillar['saltmine_openstack_keystone_metadata_port']
 %>
 
-openstack-nova-server-pkg:
-  pkg.installed:
-    - names: 
-      - openstack-nova-api
-      - openstack-nova-cert
-      - openstack-nova-console
-      - openstack-nova-scheduler
-      - openstack-nova-novncproxy
-      - novnc
-    - require: 
-      - pkg: epel-repo
-
-#http://docs.saltstack.org/en/latest/ref/states/all/salt.states.user.html
-#https://lists.launchpad.net/openstack/msg20762.html
-#nova:x:162:162:OpenStack Nova Daemons:/var/lib/nova:/sbin/nologin
-nova:
-  user.present:
-    - fullname: OpenStack Nova Daemons
-    - shell: /sbin/nologin
-    - home: /var/lib/nova
-    - uid: 162
-    - gid: 162
-    - groups:
-      - lock
+openstack-quantum-service:
+  service:
+    - dead
+    - enable: False
+    - name: quantum-server
     - require:
-      - pkg: openstack-nova-server-pkg
+      - pkg: openstack-quantum-openvswitch-pkg
 
-openstack-nova-service:
+quantum-openvswitch-agent-service:
   service:
     - running
     - enable: True
-    - names:
-% for svc in ['api', 'cert', 'console', 'consoleauth', 'metadata-api', 'novncproxy', 'scheduler', 'xvpvncproxy']:
-      - openstack-nova-${svc}
-% endfor
+    - name: quantum-openvswitch-agent
     - require:
-      - pkg: openstack-nova-server-pkg
-
-openstack-nova-db-create:
-  cmd.run:
-    - name: mysql -u root -e "CREATE DATABASE nova;"
-    - unless: echo '' | mysql nova
-    - require:
-      - pkg: mysql-pkg
-      - pkg: openstack-nova-server-pkg
-    - watch_in:
-      - cmd: openstack-nova-db-init
-
-openstack-nova-db-init:
-  cmd.run:
-    - name: |
-        mysql -u root -e "GRANT ALL ON nova.* TO '${saltmine_openstack_nova_user}'@'%' IDENTIFIED BY '${saltmine_openstack_nova_pass}';"
-    - unless: |
-        echo '' | mysql nova -u ${saltmine_openstack_nova_user} -h 0.0.0.0 --password=${saltmine_openstack_nova_pass}
-
-openstack-nova-db-sync:
-  cmd.wait:
-    - name: nova-manage db sync
+      - pkg: openstack-quantum-openvswitch-pkg
     - watch:
-      - cmd: openstack-nova-db-init
-      - cmd: openstack-nova-db-create
+      - file: openstack-quantum-ovs_quantum_plugin-ini
+
+openstack-nova-compute-service:
+  service:
+    - running
+    - enable: True
+    - name: openstack-nova-compute
+    - require:
+      - pkg: openstack-quantum-openvswitch-pkg
+
+openstack-quantum-conf:
+  file.managed:
+    - name: /etc/quantum/quantum.conf
+    - source: salt://saltmine/files/openstack/quantum.conf
+    - defaults:
+        saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
+    - template: mako
+    - require:
+      - pkg: openstack-quantum-openvswitch-pkg
+    - watch_in:
+      - service: quantum-openvswitch-agent-service
+
+
+#----------------------------
+# Setup Nova for Compute
+#----------------------------
 
 openstack-nova-api-paste-ini:
   file.managed:
@@ -108,9 +91,9 @@ openstack-nova-api-paste-ini:
         saltmine_openstack_keystone_auth_port: ${saltmine_openstack_keystone_auth_port}
     - template: mako
     - require:
-      - pkg: openstack-nova-server-pkg
+      - pkg: openstack-quantum-openvswitch-pkg
     - watch_in:
-      - service: openstack-nova-service
+      - service: openstack-nova-compute-service
 
 openstack-nova-conf:
   file.managed:
@@ -127,7 +110,7 @@ openstack-nova-conf:
         saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
     - template: mako
     - require:
-      - pkg: openstack-nova-server-pkg
+      - pkg: openstack-quantum-openvswitch-pkg
     - watch_in:
-      - service: openstack-nova-service
+      - service: openstack-nova-compute-service
 

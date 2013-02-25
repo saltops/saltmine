@@ -42,3 +42,7 @@ saltmine_openstack_quantum_pass: 'qua2013'
 # Nova
 saltmine_openstack_nova_user: 'nova'
 saltmine_openstack_nova_pass: 'nov2013'
+
+# Cinder
+saltmine_openstack_cinder_user: 'cinder'
+saltmine_openstack_cinder_pass: 'cin2013'

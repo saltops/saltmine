@@ -1,0 +1,141 @@
+#!/bin/sh
+
+# the following is the LSB init header see
+# http://www.linux-foundation.org/spec//booksets/LSB-Core-generic/LSB-Core-generic.html#INITSCRCOMCONV
+#
+### BEGIN INIT INFO
+# Provides: libvirtd
+# Required-Start: $network messagebus
+# Should-Start: $named
+# Should-Start: xend
+# Should-Start: hal
+# Should-Start: avahi-daemon
+# Required-Stop: $network messagebus
+# Should-Stop: $named
+# Default-Start: 3 4 5
+# Short-Description: daemon for libvirt virtualization API
+# Description: This is a daemon for managing guest instances
+#              and libvirt virtual networks
+#              See http://libvirt.org
+### END INIT INFO
+
+# the following is chkconfig init header
+#
+# libvirtd:   guest and virtual network management daemon
+#
+# chkconfig: 345 97 03
+# description:  This is a daemon for managing guest instances \
+#               and libvirt virtual networks \
+#               See http://libvirt.org
+#
+# processname: libvirtd
+# pidfile: /var/run/libvirtd.pid
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+SERVICE=libvirtd
+PROCESS=libvirtd
+PIDFILE=/var/run/$SERVICE.pid
+
+LIBVIRTD_CONFIG=
+LIBVIRTD_ARGS="--listen"
+KRB5_KTNAME=/etc/libvirt/krb5.tab
+INITCTL_PATH=/sbin/initctl
+
+test -f /etc/sysconfig/libvirtd && . /etc/sysconfig/libvirtd
+
+export QEMU_AUDIO_DRV
+export SDL_AUDIODRIVER
+
+LIBVIRTD_CONFIG_ARGS=
+if [ -n "$LIBVIRTD_CONFIG" ]
+then
+    LIBVIRTD_CONFIG_ARGS="--config $LIBVIRTD_CONFIG"
+fi
+
+RETVAL=0
+
+# Check if libvirt is managed by upstart and fail if it's the case
+initctl_check() {
+    if [ -x "$INITCTL_PATH" ]; then
+        #extract status from upstart
+        LIBVIRTD_UPSTART_STATUS=$($INITCTL_PATH status $SERVICE  2>/dev/null | cut -d/ -f 1)
+        if [ "$LIBVIRTD_UPSTART_STATUS" = "$SERVICE start" ]; then
+            logger -t "libvirtd" -s  "libvirtd is managed by upstart and started, use initctl instead"
+            exit 14
+        fi
+    fi
+}
+
+start() {
+    echo -n $"Starting $SERVICE daemon: "
+    initctl_check
+
+    mkdir -p /var/cache/libvirt
+    rm -rf /var/cache/libvirt/*
+
+    # LIBVIRTD_NOFILES_LIMIT from /etc/sysconfig/libvirtd is not handled
+    # automatically
+    if [ -n "$LIBVIRTD_NOFILES_LIMIT" ]; then
+        ulimit -n "$LIBVIRTD_NOFILES_LIMIT"
+    fi
+
+    KRB5_KTNAME=$KRB5_KTNAME daemon --pidfile $PIDFILE --check $SERVICE $PROCESS --daemon $LIBVIRTD_CONFIG_ARGS $LIBVIRTD_ARGS
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$SERVICE
+}
+
+stop() {
+    echo -n $"Stopping $SERVICE daemon: "
+    initctl_check
+
+    killproc -p $PIDFILE $PROCESS
+    RETVAL=$?
+    echo
+    if [ $RETVAL -eq 0 ]; then
+        rm -f /var/lock/subsys/$SERVICE
+        rm -rf /var/cache/libvirt/*
+    else
+        exit $RETVAL
+    fi
+}
+
+restart() {
+    stop
+    start
+}
+
+reload() {
+    echo -n $"Reloading $SERVICE configuration: "
+    initctl_check
+
+    killproc -p $PIDFILE $PROCESS -HUP
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+    start|stop|restart|reload)
+        $1
+        ;;
+    status)
+        status -p $PIDFILE $PROCESS
+        RETVAL=$?
+        ;;
+    force-reload)
+        reload
+        ;;
+    condrestart|try-restart)
+        [ -f /var/lock/subsys/$SERVICE ] && restart || :
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|condrestart|reload|force-reload|try-restart}"
+        exit 2
+        ;;
+esac
+exit $RETVAL

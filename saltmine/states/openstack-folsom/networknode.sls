@@ -5,7 +5,7 @@
 include:
   - saltmine.states.openstack-folsom.openstackcommon
   - saltmine.states.openstack-folsom.quantum
-  - saltmine.states.openstack-folsom.openvswitch-bridges
+  - saltmine.states.openstack-folsom.openvswitch-bridges-networknode
 
 <%
   saltmine_openstack_mysql_root_username=pillar['saltmine_openstack_mysql_root_username']
@@ -84,8 +84,6 @@ openstack-quantum-conf:
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
     - watch_in:
-      - service: quantum-l3-agent-service
-      - service: quantum-dhcp-agent-service
       - service: quantum-openvswitch-agent-service
 
 quantum-l3-agent-service:

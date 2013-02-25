@@ -9,3 +9,4 @@ include:
   - saltmine.states.openstack-folsom.quantum
   - saltmine.states.openstack-folsom.horizon
   - saltmine.states.openstack-folsom.nova
+  - saltmine.states.openstack-folsom.cinder
