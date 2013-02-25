@@ -9,6 +9,12 @@ openvswitch_filename='openvswitch-'+openvswitch_release+'.tar.gz'
 openvswitch_temp_directory=home_directory+'/openvswitch-'+openvswitch_release
 
 %>
+
+#-----------------------------------------------------------
+# Openvswitch kernel and userspace rpm build/install script
+# Compatible with RHEL 6.3
+#-----------------------------------------------------------
+
 #http://openvswitch.org/download/
 
 openvswitch-deps-pkg:
@@ -37,7 +43,8 @@ openvswitch-deps-pkg:
 rpmbuild-${directory}-directory:
   cmd.run:
     - name: mkdir -p ${home_directory}/rpmbuild/${directory}
-    - unless: "[[ -d ${home_directory}/rpmbuild/${directory} ]] && echo 'exists'"
+    - unless: |
+        [[ -d ${home_directory}/rpmbuild/${directory} ]] && echo 'exists'
     - require:
       - pkg: openvswitch-deps-pkg
     - require_in:
