@@ -6,7 +6,7 @@ include:
   - saltmine.states.openstack-folsom.openstackcommon
   - saltmine.pkgs.epel
   - saltmine.pkgs.percona
-  - saltmine.pkgs.ius
+#  - saltmine.pkgs.ius
   - saltmine.pkgs.openvswitch
 
 <%
@@ -60,6 +60,9 @@ openstack-quantum-service:
     - name: quantum-server
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
+    - watch:
+      - file: openstack-quantum-api-paste-ini
+      - file: openstack-quantum-ovs_quantum_plugin-ini
 
 openstack-quantum-db-create:
   cmd.run:
@@ -92,8 +95,6 @@ openstack-quantum-ovs_quantum_plugin-ini:
     - template: mako
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
-    - watch_in:
-      - service: openstack-quantum-service
 
 openstack-quantum-api-paste-ini:
   file.managed:
@@ -107,5 +108,3 @@ openstack-quantum-api-paste-ini:
     - template: mako
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
-    - watch_in:
-      - service: openstack-quantum-service
