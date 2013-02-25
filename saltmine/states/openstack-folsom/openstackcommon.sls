@@ -1,3 +1,5 @@
+#!yaml
+
 ntp-pkg:
   pkg.installed:
     - names: 
