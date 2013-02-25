@@ -40,6 +40,9 @@ rpmbuild-${directory}-directory:
     - unless: "[[ -d ${home_directory}/rpmbuild/${directory} ]] && echo 'exists'"
     - require:
       - pkg: openvswitch-deps-pkg
+    - require_in:
+      - cmd: openvswitch-download-source-tarball
+      - cmd: openvswitch-download-temp-tarball
 
 % endfor
 
@@ -116,6 +119,7 @@ openvswitch-fixtar:
     - cwd: ${home_directory}
     - require:
       - file: openvswitch-download-source-tarball
+      - cmd: openvswitch-fix1
 
 #------------------
 # Build the RPMS
@@ -123,16 +127,20 @@ openvswitch-fixtar:
 
 openvswitch-build-kernelrpm:
   cmd.run:
-    - name: "rpmbuild -bb -D 'kversion `uname -r`' -D 'kflavors default' rhel/openvswitch-kmod-rhel6.spec"
-    - unless: "[[ -f `ls ${home_directory}/rpmbuild/RPMS/x86_64/kmod-* 2> /dev/null` ]] && echo 'rpm exists'"
+    - name: |
+        rpmbuild -bb -D 'kversion `uname -r`' -D 'kflavors default' rhel/openvswitch-kmod-rhel6.spec
+    - unless: |
+        [[ `stat -c %s ${home_directory}/rpmbuild/RPMS/x86_64/kmod-${openvswitch_release_full}-1.el6.x86_64.rpm` -gt 1000000 ]] && echo 'rpm exists'
     - cwd: ${openvswitch_temp_directory}
     - require:
       - cmd: openvswitch-fixtar
 
 openvswitch-build-baserpms:
   cmd.run:
-    - name: "rpmbuild -bb rhel/openvswitch.spec"
-    - unless: "[[ -f `ls ${home_directory}/rpmbuild/RPMS/x86_64/openvswitch-${openvswitch_release}* 2> /dev/null` ]] && echo 'rpm exists'"
+    - name: |
+        rpmbuild -bb rhel/openvswitch.spec
+    - unless: |
+        [[ `stat -c %s ${home_directory}/rpmbuild/RPMS/x86_64/${openvswitch_release_full}-1.x86_64.rpm` -gt 1000000 ]] && echo 'rpm exists'
     - cwd: ${openvswitch_temp_directory}
     - require:
       - file: openvswitch-download-source-tarball
