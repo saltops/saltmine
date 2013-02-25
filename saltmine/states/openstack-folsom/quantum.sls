@@ -50,6 +50,9 @@ openstack-quantum-openvswitch-pkg:
       - pkg: epel-repo
       - pkg: openstack-quantum-pkg
 
+# only install database if we're on the control node
+% if 'openstack-control' in grains['roles']:
+
 openstack-quantum-service:
   service:
     - running
@@ -57,9 +60,6 @@ openstack-quantum-service:
     - name: quantum-server
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
-
-# only install database if we're on the control node
-% if 'openstack-control' in grains['roles']:
 
 openstack-quantum-db-create:
   cmd.run:
@@ -73,8 +73,10 @@ openstack-quantum-db-create:
 
 openstack-quantum-db-init:
   cmd.run:
-    - name: mysql -u root -e "GRANT ALL ON quantum.* TO '${saltmine_openstack_quantum_user}'@'%' IDENTIFIED BY '${saltmine_openstack_quantum_pass}';"
-    - unless: echo '' | mysql quantum -u ${saltmine_openstack_quantum_user} -h 0.0.0.0 --password=${saltmine_openstack_quantum_pass}
+    - name: |
+        mysql -u root -e "GRANT ALL ON quantum.* TO '${saltmine_openstack_quantum_user}'@'%' IDENTIFIED BY '${saltmine_openstack_quantum_pass}';"
+    - unless: |
+        echo '' | mysql quantum -u ${saltmine_openstack_quantum_user} -h 0.0.0.0 --password=${saltmine_openstack_quantum_pass}
 
 % endif
 
