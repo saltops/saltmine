@@ -8,9 +8,11 @@ include:
 <%
 if 'username' in pillar:
   username=pillar['username']
+else:
+  username=None
 %>
 
-% if username:
+% if username is not None:
 
 htoprc-user-file:
   file.managed:
