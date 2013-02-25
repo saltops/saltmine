@@ -102,7 +102,7 @@ openvswitch-sourcetar-copy:
     - name: |
         gunzip -c ${openvswitch_source_directory}/${openvswitch_release_full}.tar.gz > ${openvswitch_source_directory}/${openvswitch_release_full}.tar
     - unless: |
-        [[ -f ${openvswitch_source_directory}/${openvswitch_release_full}.tar && -f ${openvswitch_source_directory}/${openvswitch_release_full}.tar.gz ]] && 'files exist'
+        [[ -f ${openvswitch_source_directory}/${openvswitch_release_full}.tar && -f ${openvswitch_source_directory}/${openvswitch_release_full}.tar.gz ]] && echo 'files exist'
     - require:
       - file: openvswitch-download-source-tarball
 
