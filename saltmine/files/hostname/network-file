@@ -1,0 +1,6 @@
+NETWORKING=yes
+% if hostname is not None:
+HOSTNAME=${hostname}
+% else:
+HOSTNAME=localhost.localdomain
+% endif
