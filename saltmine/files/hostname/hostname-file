@@ -1,0 +1,5 @@
+% if hostname is not None:
+${hostname}
+% else:
+localhost.localdomain
+% endif
