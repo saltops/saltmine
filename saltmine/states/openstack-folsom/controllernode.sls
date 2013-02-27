@@ -3,7 +3,6 @@
 # openstack-folsom controlnode setup
 
 include:
-  - saltmine.states.openstack-folsom.network-config
   - saltmine.states.openstack-folsom.openstackcommon
   - saltmine.states.openstack-folsom.keystone
   - saltmine.states.openstack-folsom.glance
