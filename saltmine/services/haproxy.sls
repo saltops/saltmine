@@ -23,8 +23,6 @@ haproxy-defaultfile:
     - limit: ^ENABLED=
     - require:
       - pkg: haproxy-pkg
-    - require_in:
-      - service: haproxy-service
     - watch_in:
       - service: haproxy-service
 % endif
