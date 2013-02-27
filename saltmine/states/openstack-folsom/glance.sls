@@ -46,8 +46,10 @@ openstack-glance-db-create:
 
 openstack-glance-db-init:
   cmd.run:
-    - name: mysql -u root -e "GRANT ALL ON glance.* TO '${saltmine_openstack_glance_user}'@'%' IDENTIFIED BY '${saltmine_openstack_glance_pass}';"
-    - unless: echo '' | mysql glance -u ${saltmine_openstack_glance_user} -h 0.0.0.0 --password=${saltmine_openstack_glance_pass}
+    - name: |
+        mysql -u root -e "GRANT ALL ON glance.* TO '${saltmine_openstack_glance_user}'@'%' IDENTIFIED BY '${saltmine_openstack_glance_pass}';"
+    - unless: |
+        echo '' | mysql glance -u ${saltmine_openstack_glance_user} -h 0.0.0.0 --password=${saltmine_openstack_glance_pass}
 
 openstack-glance-db-sync:
   cmd.wait:

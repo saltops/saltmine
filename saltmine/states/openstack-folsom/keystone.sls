@@ -86,8 +86,10 @@ keystone-db-create:
 
 keystone-db-init:
   cmd.run:
-    - name: mysql -u root -e "GRANT ALL ON keystone.* TO '${saltmine_openstack_keystone_user}'@'%' IDENTIFIED BY '${saltmine_openstack_keystone_pass}';"
-    - unless: echo '' | mysql keystone -u ${saltmine_openstack_keystone_user} -h 0.0.0.0 --password=${saltmine_openstack_keystone_pass}
+    - name: | 
+        mysql -u root -e "GRANT ALL ON keystone.* TO '${saltmine_openstack_keystone_user}'@'%' IDENTIFIED BY '${saltmine_openstack_keystone_pass}';"
+    - unless: |
+        echo '' | mysql keystone -u ${saltmine_openstack_keystone_user} -h 0.0.0.0 --password=${saltmine_openstack_keystone_pass}
 
 openstack-keystone-service:
   service:
@@ -100,8 +102,10 @@ openstack-keystone-service:
 keystone-conf:
   file.sed:
     - name: /etc/keystone/keystone.conf
-    - before: 'mysql:.*'
-    - after: 'mysql://${saltmine_openstack_keystone_user}:${saltmine_openstack_keystone_pass}@${saltmine_openstack_keystone_ip}/keystone'
+    - before: |
+        mysql:.*
+    - after: | 
+        mysql://${saltmine_openstack_keystone_user}:${saltmine_openstack_keystone_pass}@${saltmine_openstack_keystone_ip}/keystone
     - limit: ^connection\ =
     - require:
       - pkg: openstack-keystone-pkg
