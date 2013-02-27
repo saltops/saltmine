@@ -8,7 +8,7 @@ haproxy-logrotate:
     - name: /etc/logrotate.d/haproxy
     - source: salt://saltmine/files/haproxy/haproxy_logrotate
     - require:
-      - pkg: rsyslog-pkg
+      - service: rsyslog-service
 
 haproxy-rsyslog-conf:
   file.managed:

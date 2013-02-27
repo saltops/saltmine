@@ -13,7 +13,5 @@ cron-logging:
       - 'cron.*                         /var/log/cron.log'
     - watch_in:
       - service: rsyslog-service
-    - require:
-      - service: rsyslog-service
 
 % endif
