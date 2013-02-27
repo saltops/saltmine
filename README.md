@@ -21,7 +21,9 @@ gone through many iterations so far, and there is a certain philosophy underpinn
 Take a look at our [SaltMine Standards](./saltmine_standards.md) document for more information.
 
 ### Contributing:
-Please contribute your Salt states here by opening a pull request on GitHub.
+Please contribute your Salt states here by opening a pull request on GitHub. Develop and test contributions using 
+the ``develop`` branch, and open pull requests to the ``develop`` branch only, since that is where all development 
+and testing occurs prior to each stable saltmine release.
 
 ### Dependencies:
 
@@ -39,6 +41,8 @@ or open pull requests with your modifications that add compatibility for your fa
 + Make sure that you have a working Salt installation (including mako)
 + Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.
 + To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your `base` environment.
++ To use a specific SaltMine version, simply checkout the version branch that you want to pin your install to. For example: ``git checkout 0.1.2``
++ To use the latest stable SaltMine version, use the 'master' branch. ``git checkout master``
 
 If you cloned SaltMine within the /srv/ directory, ensure that the ``/srv/saltmine`` directory is added to the ``base`` file_roots environment in your Salt master config file:
 
