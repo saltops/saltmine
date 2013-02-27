@@ -1,4 +1,4 @@
-#!yaml
+#!mako|yaml
 
 % if grains['os_family'] == 'RedHat':
 include:
