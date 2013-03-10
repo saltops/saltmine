@@ -1,4 +1,8 @@
-#!yaml
+#!mako|yaml
+
+<%
+  node_version = pillar['node']['version']
+%>
 
 nodejs-lea-repo:
   pkgrepo.managed:
@@ -14,3 +18,12 @@ nodejs-pkg:
       - npm
     - require:
       - pkgrepo: nodejs-lea-repo
+
+node-n:
+  cmd.run:
+    - name: |
+        npm install -g n
+        n ${node_version}
+    - shell: /bin/bash
+    - unless: |
+        [ `/usr/local/bin/node --version` == "v${node_version}" ] 
