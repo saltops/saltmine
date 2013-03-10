@@ -4,10 +4,6 @@ Welcome to host ${ grains['id'] }:
  - CPU: ${ grains['num_cpus'] }
  - Memory: ${ grains['mem_total'] } Mb
 
-% if 'environment' in grains:
-  - Environment: ${grains['environment']}
-% endif
-
 % if 'roles' in grains:
   % for role in grains['roles']:
  - Role: ${role}
@@ -15,4 +11,7 @@ Welcome to host ${ grains['id'] }:
 % endif
 % if 'group' in grains:
  - Group: ${ grains['group']}
+% endif
+% if 'environment' in grains:
+ - Environment: ${grains['environment']}
 % endif

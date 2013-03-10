@@ -3,11 +3,11 @@
 # openstack-folsom quantum setup
 
 include:
-  - saltmine.states.openstack-folsom.openstackcommon
+  - openstack-folsom.common.openstackcommon
   - saltmine.pkgs.epel
   - saltmine.pkgs.percona
 #  - saltmine.pkgs.ius
-  - saltmine.pkgs.openvswitch
+  - openstack-folsom.common.openvswitch
 
 <%
   saltmine_openstack_mysql_root_username=pillar['saltmine_openstack_mysql_root_username']

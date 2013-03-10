@@ -3,11 +3,9 @@
 # openstack-folsom networknode setup
 
 include:
-  - saltmine.states.openstack-folsom.openstackcommon
-  - saltmine.states.openstack-folsom.quantum
-  - saltmine.states.openstack-folsom.openvswitch-bridges-computenode
-  - saltmine.states.openstack-folsom.nova-compute
-  - saltmine.states.openstack-folsom.cinder
+  - openstack-folsom.common.openstackcommon
+  - openstack-folsom.common.quantum
+  - openstack-folsom.common.openvswitch-bridges-networknode
 
 <%
   saltmine_openstack_mysql_root_username=pillar['saltmine_openstack_mysql_root_username']
@@ -26,8 +24,6 @@ include:
   saltmine_openstack_quantum_user=pillar['saltmine_openstack_quantum_user']
   saltmine_openstack_quantum_pass=pillar['saltmine_openstack_quantum_pass']
 
-  saltmine_openstack_nova_user=pillar['saltmine_openstack_nova_user']
-  saltmine_openstack_nova_pass=pillar['saltmine_openstack_nova_pass']
 
   saltmine_openstack_OS_USERNAME=pillar['saltmine_openstack_OS_USERNAME']
   saltmine_openstack_OS_PASSWORD=pillar['saltmine_openstack_OS_PASSWORD']
@@ -51,16 +47,32 @@ quantum-openvswitch-agent-service:
     - name: quantum-openvswitch-agent
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
-    - watch:
-      - file: openstack-quantum-ovs_quantum_plugin-ini
 
-openstack-nova-compute-service:
+quantum-dhcp-agent-service:
   service:
     - running
     - enable: True
-    - name: openstack-nova-compute
+    - name: quantum-dhcp-agent
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
+
+openstack-quantum-l3_agent-ini:
+  file.managed:
+    - name: /etc/quantum/l3_agent.ini
+    - source: salt://saltmine/files/openstack/l3_agent.ini
+    - defaults:
+        saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
+        saltmine_openstack_keystone_auth_port: ${saltmine_openstack_keystone_auth_port}
+        saltmine_openstack_keystone_ext_ip: ${saltmine_openstack_keystone_ext_ip}
+        saltmine_openstack_keystone_metadata_port: ${saltmine_openstack_keystone_metadata_port}
+        saltmine_openstack_keystone_service_tenant_name: ${saltmine_openstack_keystone_service_tenant_name} 
+        saltmine_openstack_quantum_user: ${saltmine_openstack_quantum_user}
+        saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
+    - template: mako
+    - require:
+      - pkg: openstack-quantum-openvswitch-pkg
+    - watch_in:
+      - service: quantum-l3-agent-service
 
 openstack-quantum-conf:
   file.managed:
@@ -74,43 +86,10 @@ openstack-quantum-conf:
     - watch_in:
       - service: quantum-openvswitch-agent-service
 
-
-#----------------------------
-# Setup Nova for Compute
-#----------------------------
-
-openstack-nova-api-paste-ini:
-  file.managed:
-    - name: /etc/nova/api-paste.ini
-    - source: salt://saltmine/files/openstack/nova-api-paste.ini
-    - defaults:
-        saltmine_openstack_nova_user: ${saltmine_openstack_nova_user}
-        saltmine_openstack_nova_pass: ${saltmine_openstack_nova_pass}
-        saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
-        saltmine_openstack_keystone_service_tenant_name: ${saltmine_openstack_keystone_service_tenant_name}
-        saltmine_openstack_keystone_auth_port: ${saltmine_openstack_keystone_auth_port}
-    - template: mako
+quantum-l3-agent-service:
+  service:
+    - running
+    - enable: True
+    - name: quantum-l3-agent
     - require:
       - pkg: openstack-quantum-openvswitch-pkg
-    - watch_in:
-      - service: openstack-nova-compute-service
-
-openstack-nova-conf:
-  file.managed:
-    - name: /etc/nova/nova.conf
-    - source: salt://saltmine/files/openstack/nova.conf
-    - defaults:
-        saltmine_openstack_nova_user: ${saltmine_openstack_nova_user}
-        saltmine_openstack_nova_pass: ${saltmine_openstack_nova_pass}
-        saltmine_openstack_keystone_ip: ${saltmine_openstack_keystone_ip}
-        saltmine_openstack_keystone_service_tenant_name: ${saltmine_openstack_keystone_service_tenant_name}
-        saltmine_openstack_keystone_auth_port: ${saltmine_openstack_keystone_auth_port}
-        saltmine_openstack_keystone_ext_ip: ${saltmine_openstack_keystone_ext_ip}
-        saltmine_openstack_quantum_user: ${saltmine_openstack_quantum_user}
-        saltmine_openstack_quantum_pass: ${saltmine_openstack_quantum_pass}
-    - template: mako
-    - require:
-      - pkg: openstack-quantum-openvswitch-pkg
-    - watch_in:
-      - service: openstack-nova-compute-service
-

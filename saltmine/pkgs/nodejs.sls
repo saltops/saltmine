@@ -16,6 +16,7 @@ nodejs-pkg:
     - names:
       - nodejs
       - npm
+      - g++
     - require:
       - pkgrepo: nodejs-lea-repo
 
