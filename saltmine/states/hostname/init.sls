@@ -58,21 +58,12 @@ hostname-set-cmd:
 # Note: Using the 127.0.1.1 entry. This should work fine on most linuxes.
 # http://serverfault.com/questions/363095/what-does-127-0-1-1-represent-in-etc-hosts
 
-# create 127.0.1.1 entry in /etc/hosts file if it doesn't already exist
-hostname-127-0-1-1-create:
-  cmd.run:
-    - name: |
-        echo '127.0.1.1   ADD_HOSTNAME_HERE' >> /etc/hosts
-    - unless: |
-        [[ `cat /etc/hosts | grep '^127\.0\.1\.1' | wc -l` -gt 0 ]] && echo '127.0.1.1 loopback exists'
+# Add current hostname if the 127.0.1.1 interface doesn't already include it. 
+# This assumes that the 127.0.1.1 interface is reserved for setting the hostname.
 
-# add current hostname if the 127.0.1.1 interface doesn't already include it. 
-# this assumes that the 127.0.1.1 interface is reserved for setting the hostname.
 hostname-add-hostname:
   cmd.run:
     - name: |
-        sed s/127\.0\.1\.1.*/127\.0\.1\.1\ \ \ ${hostname}/ /etc/hosts > /tmp/hosts.new && cp -f /tmp/hosts.new /etc/hosts
+        echo '127.0.1.1   ${hostname}' >> /etc/hosts
     - unless: |
         grep '^127\.0\.1\.1\ \ \ ${hostname}$' /etc/hosts && echo 'hostname exists'
-    - require:
-      - cmd: hostname-127-0-1-1-create
