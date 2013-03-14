@@ -11,3 +11,4 @@ saltmine_crontab_file_root: '/root/crontab_file_root'
 
 ## App Version Settings
 saltmine_boto_version: '2.7.0'
+saltmine_nodejs_version: '0.9.10'

@@ -1,7 +1,7 @@
 #!mako|yaml
 
 <%
-  node_version = pillar['node']['version']
+  node_version = pillar['saltmine_nodejs_version']
 %>
 
 nodejs-lea-repo:
