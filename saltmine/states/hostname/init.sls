@@ -64,7 +64,7 @@ hostname-127-0-1-1-create:
     - name: |
         echo '127.0.1.1   ADD_HOSTNAME_HERE' >> /etc/hosts
     - unless: |
-        [[ `cat /etc/hosts | grep '^127.0.1.1' | wc -l` -gt 0 ]] && echo '127.0.1.1 loopback exists'
+        [[ `cat /etc/hosts | grep '^127\.0\.1\.1' | wc -l` -gt 0 ]] && echo '127.0.1.1 loopback exists'
 
 # add current hostname if the 127.0.1.1 interface doesn't already include it. 
 # this assumes that the 127.0.1.1 interface is reserved for setting the hostname.
