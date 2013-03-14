@@ -10,5 +10,9 @@ saltmine_crontab_path: 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/
 saltmine_crontab_file_root: '/root/crontab_file_root'
 
 ## App Version Settings
-saltmine_boto_version: '2.7.0'
+saltmine_boto_version:   '2.7.0'
 saltmine_nodejs_version: '0.9.10'
+
+## Tomcat7 Defaults
+saltmine_tomcat7_webappsdir:  '/var/lib/tomcat7/webapps'
+saltmine_tomcat7_homedir:     '/usr/share/tomcat7'
