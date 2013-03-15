@@ -7,15 +7,15 @@ haproxy-logrotate:
   file.managed:
     - name: /etc/logrotate.d/haproxy
     - source: salt://saltmine/files/haproxy/haproxy_logrotate
-    - require:
+    - watch_in:
       - service: rsyslog-service
 
 haproxy-rsyslog-conf:
   file.managed:
     - name: /etc/rsyslog.d/haproxy.conf
     - source: salt://saltmine/files/haproxy/haproxy_syslog_conf
-    - require:
-      - file: haproxy-logrotate
+    - watch_in:
+      - service: rsyslog-service
 
 rsyslog-logdir:
   file.directory:
@@ -23,5 +23,5 @@ rsyslog-logdir:
     - user: haproxy
     - mode: 755
     - makedirs: True
-    - require:
-      - file: haproxy-rsyslog-conf
+    - watch:
+      - service: rsyslog-service
