@@ -5,6 +5,7 @@ include:
 
 percona-xtradb-server:
   service:
+    - name: mysql
     - running
     - enable: True
     - watch:
