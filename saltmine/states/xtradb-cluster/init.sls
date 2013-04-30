@@ -34,7 +34,7 @@ mnt-data-dir-init:
 # xtradb_nodes={'1':'10.10.10.101', '2':'10.10.10.102', '3':'10.10.10.103'}
 
 my-cnf-xtradb-cluster:
-  file.managed
+  file.managed:
     - name: /etc/my.cnf
     - source: salt://saltmine/files/xtradb-cluster/my.cnf.mako
     - template: mako
