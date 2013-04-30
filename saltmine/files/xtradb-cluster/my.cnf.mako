@@ -15,7 +15,7 @@ node_count = len(xtradb_nodes)
 wsrep_urlstring='gcomm://'
 
 for x,y in enumerate(xtradb_nodes):
-  wsrep_urlstring+=xtradb_nodes[i]
+  wsrep_urlstring+=xtradb_nodes[y]
   if node_count > x + 1:
     wsrep_urlstring+=','
 %>
