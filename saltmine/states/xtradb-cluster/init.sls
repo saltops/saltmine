@@ -22,7 +22,8 @@ mnt-data-dir:
 mnt-data-dir-init:
   cmd.run:
     - name: mysql_install_db --datadir=/mnt/data --user=mysql
-    - unless: [ -z '$(ls /mnt/data/)'] || echo 'NOT EMPTY'
+    - unless: |
+        [ -z '$(ls /mnt/data/)' ] || echo 'NOT EMPTY'
     - require:
       - file: mnt-data-dir
     - require_in:
