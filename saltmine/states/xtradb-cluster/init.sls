@@ -8,7 +8,6 @@
 %>
 
 include:
-  - saltmine.services.xtradb-client
   - saltmine.services.xtradb-server
 
 mnt-data-dir:
