@@ -1,29 +1,15 @@
 #!mako|yaml
 
-# This won't work on debian currently.
+# Based on this, but modified to work with Ubuntu 12.04:
 # http://www.percona.com/doc/percona-xtradb-cluster/howtos/3nodesec2.html
 
 <%
-  xtradb_nodes = pillar['xtradb_nodes']
+  xtradb_nodes = pillar['saltmine_xtradb_nodes']
 %>
 
 include:
-  - saltmine.pkgs.percona
-
-
-percona-xtradb-client-pkg:
-  pkg:
-    - installed
-    - name: Percona-XtraDB-Cluster-client
-    - require:
-      - pkg: percona-repo
-
-percona-xtradb-server-pkg:
-  pkg:
-    - installed
-    - name: Percona-XtraDB-Cluster-server
-    - require:
-      - pkg: percona-repo
+  - saltmine.services.xtradb-client
+  - saltmine.services.xtradb-server
 
 mnt-data-dir:
   file.directory:
@@ -31,8 +17,7 @@ mnt-data-dir:
     - user: mysql
     - makedirs: True
     - require:
-      - pkg: percona-xtradb-client-pkg
-      - pkg: percona-xtradb-server-pkg
+      - pkg: percona-xtradb-pkgs
 
 mnt-data-dir-init:
   cmd.run:
@@ -40,25 +25,6 @@ mnt-data-dir-init:
     - unless: [ -z '$(ls /mnt/data/)'] || echo 'NOT EMPTY'
     - require:
       - file: mnt-data-dir
-
-percona-xtradb-client:
-  service:
-    - running
-    - enable: True
-    - watch:
-      - file: /etc/my.cnf
-    - require:
-      - pkg: percona-xtradb-client-pkg
-
-percona-xtradb-server:
-  service:
-    - running
-    - enable: True
-    - watch:
-      - file: /etc/my.cnf
-    - require:
-      - pkg: percona-xtradb-server-pkg
-      - cmd: mnt-data-dir-init
 
 # Retrieving from pillars and putting into this format:
 # expected xtradb_nodes pillar format:
@@ -71,8 +37,7 @@ xtradb-my-cnf-nodes${xtradb_node[0]}:
     - source: salt://saltmine/files/xtradb-cluster/my.cnf.mako
     - template: mako
     - require:
-      - pkg: percona-xtradb-client-pkg
-      - pkg: percona-xtradb-server-pkg
+      - pkg: percona-xtradb-pkgs
     - defaults:
         current_node: ${xtradb_node[0]}
         mysql_nodes: ${xtradb_nodes}

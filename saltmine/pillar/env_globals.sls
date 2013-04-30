@@ -16,3 +16,6 @@ saltmine_nodejs_version: '0.9.10'
 ## Tomcat7 Defaults
 saltmine_tomcat7_webappsdir:  '/var/lib/tomcat7/webapps'
 saltmine_tomcat7_homedir:     '/usr/share/tomcat7'
+
+## xtradb cluster nodes
+saltmine_xtradb_nodes:  {'1':'10.10.10.101', '2':'10.10.10.102', '3':'10.10.10.103', '4':'10.10.10.104'}
