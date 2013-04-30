@@ -12,10 +12,11 @@ percona-repo:
 # http://www.percona.com/doc/percona-xtradb-cluster/installation/apt_repo.html
 percona-pkgrepo:
   pkgrepo.managed:
-    - name: 'deb http://repo.percona.com/apt/ precise main'
+    - name: 'deb http://repo.percona.com/apt precise main'
     - disabled: True
-    - keyid: 1C4CBDCDCD2EFD2A
-    - keyserver: keys.gnupg.net
+    #- keyid: 1C4CBDCDCD2EFD2A
+    #- keyserver: keys.gnupg.net
+    - key_url: http://repo.percona.com/apt/dists/precise/Release.gpg
 
 % endif
 
