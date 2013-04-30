@@ -21,8 +21,19 @@ percona-xtradb-pkgs:
     - names: 
       - percona-xtradb-cluster-client-5.5
       - percona-xtradb-cluster-server-5.5
-      - percona-xtrabackup
+      #- percona-xtrabackup
+      - percona-xtradb-cluster-common-5.5
+    - require:
+      - pkg: percona-libmysqlclient18-pkg
+      - pkgrepo: percona-pkgrepo
+
+percona-libmysqlclient18-pkg:
+  pkg:
+    - installed
+    - name: libmysqlclient18
+    - version: 5.5.30-rel30.2-500.precise
     - require:
       - pkgrepo: percona-pkgrepo
 
 % endif
+
