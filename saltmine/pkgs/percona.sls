@@ -14,7 +14,7 @@ percona-repo:
 percona-pkgrepo:
   pkgrepo.managed:
     - name: 'deb http://repo.percona.com/apt precise main'
-    - disabled: True
+    - disabled: False
     - keyid: CD2EFD2A
     - keyserver: keys.gnupg.net
 
