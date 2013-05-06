@@ -1,4 +1,4 @@
-#!yaml
+#!mako|yaml
 
 include:
   - saltmine.states.nginx
