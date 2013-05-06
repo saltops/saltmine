@@ -1,7 +1,7 @@
 #!yaml
 
 include:
-  - saltmine.services.nginx
+  - saltmine.states.nginx
 
 # delete the nginx default.conf file if it exists
 nginx-default-conf:
