@@ -5,10 +5,10 @@ include:
 
 haproxy-service:
   service:
-    - dead
+    - running
     - name: haproxy
     - enable: 
-      - false
+      - True
     - require:
       - pkg: haproxy-pkg
       # - user: haproxy

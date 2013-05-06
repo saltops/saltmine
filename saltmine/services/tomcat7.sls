@@ -5,8 +5,9 @@ include:
 
 tomcat7-service:
   service:
-    - dead
+    - running
     - name: tomcat7
-    - enable: False
+    - enable: 
+      - True
     - require:
       - pkg: tomcat7-pkg

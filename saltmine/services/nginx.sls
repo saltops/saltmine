@@ -5,9 +5,10 @@ include:
 
 nginx-service:
   service:
-    - dead
+    - running
     - name: nginx
-    - enable: False
+    - enable: 
+      - True
     - require:
       - pkg: nginx-pkg
       - user: nginx

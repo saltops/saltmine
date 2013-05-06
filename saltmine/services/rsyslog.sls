@@ -7,6 +7,7 @@ rsyslog-service:
   service:
     - running
     - name: rsyslog
-    - enable: True
+    - enable: 
+      - True
     - require:
       - pkg: rsyslog-pkg
