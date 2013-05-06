@@ -11,10 +11,12 @@ nginx-service:
       - True
     - require:
       - pkg: nginx-pkg
-% if grains['os_family'] == 'Debian':
-      - user: www-data
-      - group: www-data
-% else:
-      - user: nginx
-      - group: nginx
-% endif
+
+# TODO: Add user/group checking:
+# # if grains['os_family'] == 'Debian':
+#       - user: www-data
+#       - group: www-data
+# # else:
+#       - user: nginx
+#       - group: nginx
+# # endif
