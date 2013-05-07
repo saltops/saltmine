@@ -1,0 +1,9 @@
+$ModLoad imuxsock
+
+$ModLoad imklog
+
+# Provides UDP forwarding. The IP is the server's IP address
+*.* @${rsyslog_server_address}:514 
+
+# Provides TCP forwarding. But the current server runs on UDP
+# *.* @@${rsyslog_server_address}:514
