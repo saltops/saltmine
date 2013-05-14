@@ -1,14 +1,15 @@
-#!yaml
+#!mako|yaml
 
 include:
-  - saltmine.services.nginx
+  - saltmine.states.nginx
 
 # delete the nginx default.conf file if it exists
 nginx-default-conf:
   file.absent:
-    - name:
-      - /etc/nginx/conf.d/default.conf
-    - require_in:
-      - service: nginx-service
+% if grains['os_family'] == 'RedHat':
+    - name: /etc/nginx/conf.d/default.conf
+% else:
+    - name: /etc/nginx/sites-enabled/default
+% endif
     - watch_in:
       - service: nginx-service

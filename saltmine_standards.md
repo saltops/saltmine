@@ -37,7 +37,7 @@ All elements must use named and unique keys to enable easy extension.
 
 ### Services:
 
-+ Non-core services are given default states of ``dead`` and ``enable: False``. Services must be explicitly enabled and started in your state files. System services like crond or rsyslogd are core services and by default we can expect users to want them running.
++ All services are given default states of ``running`` and ``enable: True``. Included services must be explicitly disabled and stopped in your state files.
 + Services are set to require the appropriate installation states
 + The service itself should not have a ``watch: file`` parameter. This is not very maintainable.
 

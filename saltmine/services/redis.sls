@@ -5,9 +5,9 @@ include:
 
 redis-service:
   service:
-    - dead
+    - running
     - enable:
-      - false
+      - True
     - require:
       - pkg: redis-pkg
 % if grains['os_family'] == 'Debian':
