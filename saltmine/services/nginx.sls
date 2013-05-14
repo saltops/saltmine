@@ -1,14 +1,22 @@
-#!yaml
+#!mako|yaml
 
 include:
   - saltmine.pkgs.nginx
 
 nginx-service:
   service:
-    - dead
+    - running
     - name: nginx
-    - enable: False
+    - enable: 
+      - True
     - require:
       - pkg: nginx-pkg
-      - user: nginx
-      - group: nginx
+
+# TODO: Add user/group checking:
+# # if grains['os_family'] == 'Debian':
+#       - user: www-data
+#       - group: www-data
+# # else:
+#       - user: nginx
+#       - group: nginx
+# # endif

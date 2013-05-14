@@ -7,6 +7,7 @@ sendmail-service:
   service:
     - running
     - name: sendmail
-    - enable: True
+    - enable: 
+      - True
     - require:
       - pkg: sendmail-pkg

@@ -7,7 +7,8 @@ percona-xtradb-server:
   service:
     - name: mysql
     - running
-    - enable: True
+    - enable: 
+      - True
     - watch:
       - file: /etc/my.cnf
     - require:

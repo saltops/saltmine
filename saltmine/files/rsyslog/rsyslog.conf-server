@@ -1,0 +1,17 @@
+# provides support for local system logging
+$ModLoad imuxsock 
+
+# provides kernel logging support (previously done by rklogd)
+$ModLoad imklog
+
+# provides UDP syslog reception. For TCP, load imtcp.
+$ModLoad imudp
+
+# For TCP, InputServerRun 514
+$UDPServerRun 514
+
+# This one is the template to generate the log filename dynamically, depending on the client's IP address.
+$template FILENAME,"/var/log/%fromhost-ip%/syslog.log"
+
+# Log all messages to the dynamically formed file. Now each clients log (192.168.1.2, 192.168.1.3,etc...), will be under a separate directory which is formed by the template FILENAME.
+*.* ?FILENAME
