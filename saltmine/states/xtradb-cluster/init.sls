@@ -35,7 +35,7 @@ mnt-data-dir-init:
 
 my-cnf-xtradb-cluster:
   file.managed:
-    - name: /etc/my.cnf
+    - name: /etc/mysql/my.cnf
     - source: salt://saltmine/files/xtradb-cluster/my.cnf.mako
     - template: mako
     - require:
