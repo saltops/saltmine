@@ -40,6 +40,8 @@ my-cnf-xtradb-cluster:
     - template: mako
     - require:
       - pkg: percona-xtradb-pkgs
+    - watch_in:
+      - service: percona-xtradb-server
     - defaults:
         current_node: ${grains['id']}
         xtradb_nodes: ${xtradb_nodes}
