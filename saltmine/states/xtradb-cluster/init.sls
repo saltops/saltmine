@@ -35,11 +35,13 @@ mnt-data-dir-init:
 
 my-cnf-xtradb-cluster:
   file.managed:
-    - name: /etc/my.cnf
+    - name: /etc/mysql/my.cnf
     - source: salt://saltmine/files/xtradb-cluster/my.cnf.mako
     - template: mako
     - require:
       - pkg: percona-xtradb-pkgs
+    - watch_in:
+      - service: percona-xtradb-server
     - defaults:
         current_node: ${grains['id']}
         xtradb_nodes: ${xtradb_nodes}
