@@ -9,7 +9,5 @@ percona-xtradb-server:
     - running
     - enable: 
       - True
-    - watch:
-      - file: /etc/my.cnf
     - require:
       - pkg: percona-xtradb-pkgs
