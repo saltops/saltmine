@@ -26,5 +26,7 @@ node-n:
         npm install -g n
         n ${node_version}
     - shell: /bin/bash
+    - require:
+      - pkg: nodejs-pkg
     - unless: |
         [ `/usr/local/bin/node --version` == "v${node_version}" ] 
