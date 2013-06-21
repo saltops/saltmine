@@ -12,6 +12,6 @@ debian-cnf-xtradb-cluster:
         
 debian-sys-maint-mysql-init:
   cmd.run:
-    - name: GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '${pillar['saltmine_xtradbcluster_debiansys_password']}';
+    - name: mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '${pillar['saltmine_xtradbcluster_debiansys_password']}'; Flush privileges;"
     - require:
       - file: debian-cnf-xtradb-cluster
