@@ -5,8 +5,6 @@ mnt-data-dir:
     - name: /mnt/data
     - user: mysql
     - makedirs: True
-    - require:
-      - pkg: percona-xtradb-pkgs
 
 mnt-data-dir-init:
   cmd.run:
