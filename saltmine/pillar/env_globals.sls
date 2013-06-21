@@ -20,6 +20,7 @@ saltmine_tomcat7_homedir:     '/usr/share/tomcat7'
 ## xtradb settings
 saltmine_xtradb_nodes:  {'1':'10.10.10.101', '2':'10.10.10.102', '3':'10.10.10.103', '4':'10.10.10.104'}
 saltmine_xtradb_cluster_name: 'xtradb_cluster_one'
+saltmine_xtradbcluster_debiansys_password: 's00persecurepassword'
 
 ## rsyslog settings
 saltmine_rsyslog_server_address: '192.168.1.1'
