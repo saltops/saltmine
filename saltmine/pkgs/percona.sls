@@ -16,7 +16,7 @@ percona-pkgrepo:
     - name: 'deb http://repo.percona.com/apt precise main'
     - disabled: False
     - keyid: CD2EFD2A
-    - keyserver: keys.gnupg.net
+    - keyserver: hkp://keys.gnupg.net:80
 
 % endif
 
