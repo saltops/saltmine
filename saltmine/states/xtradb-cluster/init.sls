@@ -11,24 +11,6 @@
 include:
   - saltmine.services.xtradb-server
 
-mnt-data-dir:
-  file.directory:
-    - name: /mnt/data
-    - user: mysql
-    - makedirs: True
-    - require:
-      - pkg: percona-xtradb-pkgs
-
-mnt-data-dir-init:
-  cmd.run:
-    - name: mysql_install_db --datadir=/mnt/data --user=mysql
-    - unless: |
-        [ -z '$(ls /mnt/data/)' ] || echo 'NOT EMPTY'
-    - require:
-      - file: mnt-data-dir
-    - require_in:
-      - file: my-cnf-xtradb-cluster
-
 # this is simplified by us having the grains['id'] set to the system dns.
 # expected xtradb_nodes pillar format:
 # xtradb_nodes={'1':'10.10.10.101', '2':'10.10.10.102', '3':'10.10.10.103'}
