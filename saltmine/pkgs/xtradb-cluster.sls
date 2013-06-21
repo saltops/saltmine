@@ -31,7 +31,7 @@ percona-libmysqlclient18-pkg:
   pkg:
     - installed
     - name: libmysqlclient18
-    - version: 5.5.30-rel30.2-500.precise
+    - version: latest
     - require:
       - pkgrepo: percona-pkgrepo
 
