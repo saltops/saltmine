@@ -41,7 +41,12 @@ or open pull requests with your modifications that add compatibility for your fa
 + Make sure that you have a working Salt installation (including mako)
 + Clone the SaltMine repo, (recommended cloning to /srv/) and include the SaltMine base directory in the file_roots setting of your salt master.
 + To make the SaltMine configs available to salt minions in all environments, (recommended) add the SaltMine repo base directory to your `base` environment.
-+ To use a specific SaltMine version, simply checkout the version branch that you want to pin your install to. For example: ``git checkout 0.1.2``
++ To use a specific SaltMine version, simply checkout the release tag that you want to pin your install to. For example:
+  ```
+  git fetch --tags
+  git checkout saltmine-0.1.5
+  ```
+
 + To use the latest stable SaltMine version, use the 'master' branch. ``git checkout master``
 
 If you cloned SaltMine within the /srv/ directory, ensure that the ``/srv/saltmine`` directory is added to the ``base`` file_roots environment in your Salt master config file:
