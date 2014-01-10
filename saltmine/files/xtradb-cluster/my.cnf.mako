@@ -22,7 +22,7 @@ for x,y in enumerate(xtradb_nodes):
 [mysqld]
 wsrep_cluster_address=${wsrep_urlstring}
 # Node address
-wsrep_node_address=${current_node}
+#wsrep_node_address=${current_node}
 wsrep_node_name=${current_node}
 
 datadir=/mnt/data
